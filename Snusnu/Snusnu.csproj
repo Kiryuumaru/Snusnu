@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>App.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="App.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+<PackageReference Include="Binance.Net" Version="6.8.0" />
+<PackageReference Include="Syncfusion.Licensing" Version="18.4.0.42" />
+<PackageReference Include="Syncfusion.Shared.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.Tools.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.Data.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.SfGrid.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.SfChart.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.SfDiagram.WPF" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.Themes.Metro.Wpf" Version="18.4.0.39" />
+<PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="18.4.0.39" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="App.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\Windows\" />
+  </ItemGroup>
+
+  
+
+</Project>
