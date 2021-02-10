@@ -1,0 +1,629 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib" 
+    xmlns:shared="clr-namespace:Syncfusion.Windows.Shared;assembly=Syncfusion.Shared.WPF"
+    xmlns:tools="clr-namespace:Syncfusion.Windows.Tools.Controls;assembly=Syncfusion.Tools.WPF"
+    xmlns:provider="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+    xmlns:tools_resources="clr-namespace:Syncfusion.Windows.Tools.Controls.Resources;assembly=Syncfusion.Tools.WPF"
+    xmlns:windows_shared="clr-namespace:Syncfusion.Windows;assembly=Syncfusion.Shared.Wpf">
+
+    <ResourceDictionary.MergedDictionaries>
+        <provider:ResourceDictionaryProvider DictionaryName="Common" ThemeName="MaterialDark"/>
+        <provider:ResourceDictionaryProvider DictionaryName="Brushes" ThemeName="MaterialDark"/>
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/MSControl/TabControl.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialDark.WPF;component/Ribbon/RibbonDropDownButton.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+
+    <tools_resources:ResourceWrapper x:Key="ResourceWrapperKey" />
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <!--  RibbonButtonPopupItemStyle  -->
+    <Style x:Key="SyncfusionQATMenuItemRibbonButtonStyle" TargetType="{x:Type tools:RibbonButton}">
+        <Setter Property="OverridesDefaultStyle" Value="true" />
+        <Setter Property="Background" Value="{StaticResource PopupBackground}" />
+        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+        <Setter Property="FontFamily" Value="{StaticResource MaterialDark.ThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource MaterialDark.BodyTextStyle}" />
+        <Setter Property="FontWeight" Value="{StaticResource MaterialDark.FontWeightNormal}" />
+        <Setter Property="BorderThickness" Value="{StaticResource MaterialDark.BorderThickness1}" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:RibbonButton}">
+                    <Border
+                        Name="OuterBorder"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MinHeight="{TemplateBinding MinHeight}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        MaxHeight="{TemplateBinding MaxHeight}"
+                        Margin="{TemplateBinding Margin}"
+                        Padding="0,0,7,0"
+                        Background="{TemplateBinding Panel.Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid Margin="0,1,0,1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="22" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Border
+                                Name="PART_CheckBorder"
+                                Grid.Column="0"
+                                Width="19"
+                                Height="19"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                                <Path
+                                    Width="8"
+                                    Height="8"
+                                    Data="M10.738967,0 L11.817,1.1360061 5.1774399,7.4388217 5.1789999,7.4406547 4.0474274,8.5560006 0,3.7727338 1.1959616,2.7609998 4.1605471,6.244079 z"
+                                    Fill="{StaticResource IconColor}"
+                                    SnapsToDevicePixels="True"
+                                    Stretch="Fill" />
+                            </Border>
+                            <TextBlock
+                                Name="label"
+                                Grid.Column="1"
+                                Margin="7,2,2,2"
+                                VerticalAlignment="Center"
+                                Foreground="{StaticResource SecondaryForeground}"
+                                Text="{TemplateBinding Label}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="False" />
+                                <Condition Property="IsKeyboardFocused" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{StaticResource SecondaryHoverBackground}" />
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource SecondaryHoverBackground}" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="PART_CheckBorder" Property="Visibility" Value="Visible" />
+
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="{StaticResource SecondaryHoverBackground}" />
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource SecondaryHoverBackground}" />
+                            <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+                            <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="OuterBorder" Property="Background" Value="Transparent" />
+                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="Opacity" Value="0.5"/>
+                        </Trigger>
+                        <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                            <Setter Property="FontSize" Value="13" />
+                            <Setter Property="Padding" Value="16,9,16,9" />
+                            <Setter Property="MinHeight" Value="40"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  TabButton Style  -->
+    <Style x:Key="SyncfusionTabButtonStyle" TargetType="{x:Type tools:TabButton}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderAlt}" />
+        <Setter Property="windows_shared:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="FontFamily" Value="{StaticResource MaterialDark.ThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource MaterialDark.BodyTextStyle}" />
+        <Setter Property="Padding" Value="0,1,0,2" />
+        <Setter Property="FontWeight" Value="{StaticResource MaterialDark.FontWeightNormal}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:TabButton}">
+                    <Border
+                        x:Name="border"
+                        Height="25"
+                        Margin="0,0,0,0"
+                        Background="{TemplateBinding Background}"
+                        TextElement.Foreground="{TemplateBinding Foreground}">
+                        <Grid ClipToBounds="True">
+
+                            <Border
+                                Name="center_Path"
+                                Height="25"
+                                Margin="0"
+                                Panel.ZIndex="100"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+
+                                <Grid>
+                                    <ContentPresenter
+                                        x:Name="PART_CaptionContent"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{Binding RelativeSource={RelativeSource AncestorType={x:Type tools:Ribbon}}, Path=ItemTemplate}"
+                                        ContentTemplateSelector="{Binding RelativeSource={RelativeSource AncestorType={x:Type tools:Ribbon}}, Path=ItemTemplateSelector}" />
+                                    <TextBlock
+                                        Name="PART_Caption"
+                                        Margin="{TemplateBinding Padding}"
+                                        VerticalAlignment="Center"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        SnapsToDevicePixels="True"
+                                        Text="{TemplateBinding Caption}"
+                                        TextAlignment="Center" />
+                                </Grid>
+
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+
+                        <!--  Context  Tab Group Checked  -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tools:RibbonTab}}, Path=HasContextTabGroup}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+
+                            <Setter TargetName="PART_Caption" Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+                            <Setter TargetName="center_Path" Property="BorderBrush" Value="{StaticResource PrimaryBackground}" />
+                            <Setter TargetName="border" Property="Margin" Value="0,0,0,-3" />
+                            <Setter TargetName="center_Path" Property="BorderThickness" Value="0,0,0,2" />
+                            <Setter TargetName="center_Path" Property="Background" Value="Transparent" />
+                        </MultiDataTrigger>
+
+                        <!--  Context  Tab Group Checked when context color is  Transparent  -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tools:RibbonTab}}, Path=HasContextTabGroup}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tools:RibbonTab}}, Path=ContextColor}" Value="Transparent" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="PART_Caption" Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+                        </MultiDataTrigger>
+
+                        <!--  Tab Checked  -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type tools:RibbonTab}}, Path=HasContextTabGroup}" Value="False" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{StaticResource PrimaryColorForeground}" />
+                            <Setter TargetName="center_Path" Property="BorderThickness" Value="0,0,0,2" />
+                            <Setter TargetName="center_Path" Property="BorderBrush" Value="{StaticResource PrimaryBackground}" />
+                            <Setter TargetName="border" Property="Margin" Value="0,0,0,-3" />
+                            <Setter TargetName="center_Path" Property="Background" Value="Transparent" />
+                        </MultiDataTrigger>
+
+                        <!--  Tab Mouse Over  -->
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsMouseOver}" Value="True" />
+                                <Condition Binding="{Binding RelativeSource={RelativeSource Self}, Path=IsChecked}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{StaticResource ContentForeground}" />
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{StaticResource PrimaryBackgroundOpacity}" />
+                <Setter Property="BorderBrush" Value="{StaticResource PrimaryBackgroundOpacity}" />
+                <Setter Property="Foreground" Value="{StaticResource ContentForeground}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="Foreground" Value="{StaticResource DisabledForeground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource SyncfusionTabButtonStyle}" TargetType="{x:Type tools:TabButton}" />
+
+    <!--  QuickAccessToolBar style  -->
+    <Style x:Key="SyncfusionQuickAccessToolBarStyle" TargetType="{x:Type tools:QuickAccessToolBar}">
+        <Setter Property="Background" Value="{StaticResource ContentBackgroundAlt2}" />
+        <Setter Property="GeometryBackground" Value="{StaticResource ContentBackgroundAlt2}" />
+        <Setter Property="GeometryStroke" Value="{StaticResource BorderAlt}" />
+        <Setter Property="Control.Foreground" Value="{StaticResource ContentForeground}" />
+        <Setter Property="tools:SimplifiedLayoutSettings.LayoutMode" Value="Normal" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="windows_shared:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:QuickAccessToolBar}">
+                    <Border
+                            Width="{TemplateBinding Width}"
+                            Height="{TemplateBinding Height}"
+                            MinHeight="{TemplateBinding MinHeight}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <tools:TwoItemsLayoutPanelEx
+                                Name="PART_PanelEx"
+                                MinHeight="25"
+                                Margin="0,-1,0,0"
+                                windows_shared:WindowChrome.IsHitTestVisibleInChrome="True"
+                                MaxRightWidth="30"
+                                MinRightWidth="30">
+                            <ItemsControl Name="PART_Main" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <tools:QuickAccessToolBarPanel
+                                                HorizontalAlignment="Left"
+                                                Background="Transparent"
+                                                ClipToBounds="True"
+                                                GeometryBackground="{Binding Path=GeometryBackground, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type tools:QuickAccessToolBar}}}"
+                                                GeometryStroke="{Binding Path=GeometryStroke, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type tools:QuickAccessToolBar}}}"
+                                                GeometryStrokeThickness="0"
+                                                HasGeometry="{Binding Path=HasGeometry, Mode=TwoWay, RelativeSource={RelativeSource AncestorType={x:Type tools:QuickAccessToolBar}}}" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                            <Grid>
+                                <tools:DropDownButton
+                                        Name="PART_PopupButton"
+                                        Width="23"
+                                        Style="{StaticResource SyncfusionQuickAccessPopupDropDownButtonStyle}">
+                                    <Border
+                                            x:Name="_QATDropDownPopUp"
+                                            Width="Auto"
+                                            BorderBrush="{StaticResource ContentBackground}"
+                                            BorderThickness="0.5">
+                                        <Grid>
+                                            <StackPanel>
+                                                <Border
+                                                        Width="Auto"
+                                                        Height="22"
+                                                        Background="{StaticResource ContentBackgroundAlt2}">
+                                                    <Border.Margin>
+                                                                <Thickness>1,1,0,1</Thickness>
+                                                    </Border.Margin>
+                                                    <TextBlock
+                                                            x:Uid="CustomizeQATTextBlock"
+                                                            Width="Auto"
+                                                            Margin="6,0,3,0"
+                                                            Padding="0,0,7,0"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center"
+                                                            FontWeight="{StaticResource MaterialDark.FontWeightMedium}"
+                                                            Foreground="{StaticResource ContentForeground}"
+                                                            Text="{Binding Source={StaticResource ResourceWrapperKey}, Path=CustomizeQAT}" />
+                                                </Border>
+                                                <ItemsControl
+                                                        Name="PART_QATMenu"
+                                                        FocusManager.IsFocusScope="False"
+                                                        KeyboardNavigation.IsTabStop="False">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+                                                                <StackPanel.Resources>
+                                                                    <Style TargetType="{x:Type tools:RibbonButton}">
+                                                                        <Setter Property="OverridesDefaultStyle" Value="true" />
+                                                                        <Setter Property="Background" Value="{StaticResource PopupBackground}" />
+                                                                        <Setter Property="Foreground" Value="{StaticResource SecondaryForeground}" />
+                                                                        <Setter Property="FontFamily" Value="{StaticResource MaterialDark.ThemeFontFamily}" />
+                                                                        <Setter Property="FontSize" Value="{StaticResource MaterialDark.BodyTextStyle}" />
+                                                                        <Setter Property="FontWeight" Value="{StaticResource MaterialDark.FontWeightNormal}" />
+                                                                        <Setter Property="BorderThickness" Value="{StaticResource MaterialDark.BorderThickness1}" />
+                                                                        <Setter Property="Margin" Value="1,0,0,0" />
+                                                                        <Setter Property="Padding" Value="0,0,7,0" />
+                                                                        <Setter Property="Template">
+                                                                            <Setter.Value>
+                                                                                <ControlTemplate TargetType="{x:Type tools:RibbonButton}">
+                                                                                    <Border
+                                                                                            Name="OuterBorder"
+                                                                                            Width="{TemplateBinding Width}"
+                                                                                            Height="{TemplateBinding Height}"
+                                                                                            MinWidth="{TemplateBinding MinWidth}"
+                                                                                            MinHeight="{TemplateBinding MinHeight}"
+                                                                                            MaxWidth="{TemplateBinding MaxWidth}"
+                                                                                            MaxHeight="{TemplateBinding MaxHeight}"
+                                                                                            Margin="{TemplateBinding Margin}"
+                                                                                            Padding="{TemplateBinding Padding}"
+                                                                                            Background="{TemplateBinding Panel.Background}"
+                                                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                                                            SnapsToDevicePixels="True">
+                                                                                        <Grid Margin="0,1,0,1">
+                                                                                            <Grid.ColumnDefinitions>
+                                                                                                <ColumnDefinition Width="Auto" MinWidth="22" />
+                                                                                                <ColumnDefinition Width="Auto" />
+                                                                                            </Grid.ColumnDefinitions>
+                                                                                            <Border
+                                                                                                    Name="PART_CheckBorder"
+                                                                                                    Grid.Column="0"
+                                                                                                    Width="19"
+                                                                                                    Height="19"
+                                                                                                    HorizontalAlignment="Center"
+                                                                                                    VerticalAlignment="Center"
+                                                                                                    Background="Transparent"
+                                                                                                    Visibility="Collapsed">
+                                                                                                <Path
+                                                                                                        x:Name="path"
+                                                                                                        Width="8"
+                                                                                                        Height="8"
+                                                                                                        Data="M10.738967,0 L11.817,1.1360061 5.1774399,7.4388217 5.1789999,7.4406547 4.0474274,8.5560006 0,3.7727338 1.1959616,2.7609998 4.1605471,6.244079 z"
+                                                                                                        Fill="{StaticResource ContentBackgroundAlt2}"
+                                                                                                        SnapsToDevicePixels="True"
+                                                                                                        Stretch="Fill" />
+                                                                                            </Border>
+                                                                                            <TextBlock
+                                                                                                    Name="label"
+                                                                                                    Grid.Column="1"
+                                                                                                    Margin="7,2,2,2"
+                                                                                                    VerticalAlignment="Center"
+                                                                                                    Foreground="{TemplateBinding Foreground}"
+                                                                                                    Text="{TemplateBinding Label}" />
+                                                                                        </Grid>
+                                                                                    </Border>
+                                                                                    <ControlTemplate.Triggers>
+                                                                                        <MultiTrigger>
+                                                                                            <MultiTrigger.Conditions>
+                                                                                                <Condition Property="IsMouseOver" Value="False" />
+                                                                                                <Condition Property="IsKeyboardFocused" Value="True" />
+                                                                                            </MultiTrigger.Conditions>
+                                                                                            <Setter TargetName="OuterBorder" Property="Background" Value="{StaticResource SecondaryHoverBackground}" />
+                                                                                            <Setter TargetName="path" Property="Fill" Value="{StaticResource IconColor}" />
+                                                                                        </MultiTrigger>
+                                                                                        <Trigger Property="IsSelected" Value="True">
+                                                                                            <Setter TargetName="PART_CheckBorder" Property="Visibility" Value="Visible" />
+                                                                                        </Trigger>
+                                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                                            <Setter TargetName="OuterBorder" Property="Background" Value="{StaticResource SecondaryHoverBackground}" />
+                                                                                            <Setter TargetName="OuterBorder" Property="BorderBrush" Value="{StaticResource SecondaryHoverBackground}" />
+                                                                                            <Setter TargetName="OuterBorder" Property="BorderThickness" Value="{StaticResource MaterialDark.BorderThickness1}" />
+                                                                                            <Setter TargetName="path" Property="Fill" Value="{StaticResource IconColor}" />
+                                                                                            <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                                                        </Trigger>
+                                                                                        <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                                                                                            <Setter Property="FontSize" Value="13" />
+                                                                                            <Setter Property="Padding" Value="16,9,16,9" />
+                                                                                        </Trigger>
+                                                                                    </ControlTemplate.Triggers>
+                                                                                </ControlTemplate>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </Style>
+                                                                </StackPanel.Resources>
+                                                            </StackPanel>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                                <Rectangle
+                                                        Name="TopSeperator"
+                                                        Height="1"
+                                                        Margin="30,0,0,0"
+                                                        Fill="{StaticResource BorderAlt}"
+                                                        StrokeThickness="{StaticResource MaterialDark.StrokeThickness1}"
+                                                        Visibility="Collapsed" />
+                                                <tools:RibbonButton
+                                                        Name="PART_MoreCommands"
+                                                        Width="auto"
+                                                        Margin="0,1"
+                                                        Command="tools:RibbonCommands.QATMoreCommands"
+                                                        Foreground="{StaticResource SecondaryForeground}"
+                                                        Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATMoreCommands}"
+                                                        Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type tools:Ribbon}}, Path=EnableMoreCommands, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <tools:RibbonButton
+                                                        Name="PART_AboveButton"
+                                                        Width="auto"
+                                                        Margin="0,1"
+                                                        Command="tools:RibbonCommands.PlaceQATAbove"
+                                                        Foreground="{StaticResource SecondaryForeground}"
+                                                        Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATShowAbove}"
+                                                        Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}"
+                                                        Visibility="Collapsed" />
+                                                <tools:RibbonButton
+                                                        Name="PART_BelowButton"
+                                                        Width="auto"
+                                                        Margin="0,1"
+                                                        Command="tools:RibbonCommands.PlaceQATBelow"
+                                                        Foreground="{StaticResource SecondaryForeground}"
+                                                        Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATShowBelow}"
+                                                        Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}" />
+                                                <Rectangle
+                                                        Height="1"
+                                                        Margin="30,1,0,1"
+                                                        Fill="{StaticResource BorderAlt}"
+                                                        StrokeThickness="{StaticResource MaterialDark.StrokeThickness1}" />
+                                                <tools:RibbonButton
+                                                        Name="PART_MinimizeButton"
+                                                        Width="auto"
+                                                        Margin="0,1"
+                                                        Command="tools:RibbonCommands.MinimizeRibbon"
+                                                        Foreground="{StaticResource SecondaryForeground}"
+                                                        IsToggle="True"
+                                                        Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=MinimizeRibbon}"
+                                                        Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </tools:DropDownButton>
+                                <tools:DropDownButton
+                                        x:Name="PART_OverflowButton"
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource SyncfusionRibbonOverflowDropDownButtonStyle}"
+                                        Visibility="Collapsed">
+                                    <tools:DropDownButton.PathGeometry>
+                                        <GeometryGroup>
+                                            <PathGeometry>
+                                                <PathFigure
+                                                        IsClosed="True"
+                                                        IsFilled="True"
+                                                        StartPoint="3.5,8">
+                                                    <LineSegment Point="4.5,9" />
+                                                    <LineSegment Point="3.5,10" />
+                                                </PathFigure>
+                                            </PathGeometry>
+                                            <PathGeometry>
+                                                <PathFigure
+                                                        IsClosed="True"
+                                                        IsFilled="True"
+                                                        StartPoint="7.5,8">
+                                                    <LineSegment Point="8.5,9" />
+                                                    <LineSegment Point="7.5,10" />
+                                                </PathFigure>
+                                            </PathGeometry>
+                                        </GeometryGroup>
+                                    </tools:DropDownButton.PathGeometry>
+                                    <StackPanel
+                                            x:Name="PART_OverflowPanel"
+                                            Height="21"
+                                            Background="{TemplateBinding Background}"
+                                            Orientation="Horizontal">
+                                        <ItemsControl Name="PART_PopupItemsControl">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+
+                                        <tools:DropDownButton
+                                                Name="PART_PopupButtonOverflowed"
+                                                Style="{StaticResource SyncfusionQuickAccessPopupDropDownButtonStyle}"
+                                                Visibility="{TemplateBinding QATDropDownVisiblity}">
+                                            <tools:DropDownButton.PathGeometry>
+                                                <GeometryGroup>
+                                                    <LineGeometry StartPoint="4,7" EndPoint="9,7" />
+                                                    <PathGeometry>
+                                                        <PathFigure
+                                                                IsClosed="True"
+                                                                IsFilled="True"
+                                                                StartPoint="5,10">
+                                                            <LineSegment Point="8,10" />
+                                                            <LineSegment Point="6.5,12.5" />
+                                                        </PathFigure>
+                                                    </PathGeometry>
+                                                </GeometryGroup>
+                                            </tools:DropDownButton.PathGeometry>
+                                            <Border
+                                                    Width="220"
+                                                    Padding="2"
+                                                    BorderBrush="{StaticResource ContentBackground}"
+                                                    BorderThickness="0.5">
+                                                <Grid>
+                                                    <DockPanel>
+                                                        <Border
+                                                                Width="25"
+                                                                HorizontalAlignment="Left"
+                                                                Background="Transparent"
+                                                                DockPanel.Dock="Left" />
+                                                    </DockPanel>
+                                                    <StackPanel>
+                                                        <Border
+                                                                Height="22"
+                                                                Margin="0,0,0,1"
+                                                                Background="{StaticResource ContentBackgroundAlt2}">
+                                                            <TextBlock
+                                                                    x:Uid="CustomizeQATTextBlock"
+                                                                    Margin="3,0,0,0"
+                                                                    VerticalAlignment="Center"
+                                                                    FontWeight="{StaticResource MaterialDark.FontWeightMedium}"
+                                                                    Foreground="{StaticResource ContentForeground}"
+                                                                    Text="{Binding Source={StaticResource ResourceWrapperKey}, Path=CustomizeQAT}" />
+                                                        </Border>
+                                                        <ItemsControl Name="PART_QATMenuOverFlow" ItemContainerStyle="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}">
+                                                            <ItemsControl.ItemsPanel>
+                                                                <ItemsPanelTemplate>
+                                                                    <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical" />
+                                                                </ItemsPanelTemplate>
+                                                            </ItemsControl.ItemsPanel>
+                                                        </ItemsControl>
+                                                        <Separator
+                                                                Name="TopSeperatorOverFlow"
+                                                                Height="2"
+                                                                Margin="30,0,0,0"
+                                                                Background="#FFE0E3E6"
+                                                                Visibility="Collapsed" />
+                                                        <tools:RibbonButton
+                                                                Command="tools:RibbonCommands.QATMoreCommands"
+                                                                Foreground="{StaticResource SecondaryForeground}"
+                                                                Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATMoreCommands}"
+                                                                Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}"
+                                                                Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type tools:Ribbon}}, Path=EnableMoreCommands, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                        <tools:RibbonButton
+                                                                Command="tools:RibbonCommands.PlaceQATAbove"
+                                                                Foreground="{StaticResource SecondaryForeground}"
+                                                                Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATShowAbove}"
+                                                                Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}"
+                                                                Visibility="{Binding ElementName=PART_AboveButton, Path=Visibility, Mode=TwoWay}" />
+                                                        <tools:RibbonButton
+                                                                Command="tools:RibbonCommands.PlaceQATBelow"
+                                                                Foreground="{StaticResource SecondaryForeground}"
+                                                                Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATShowBelow}"
+                                                                Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}"
+                                                                Visibility="{Binding ElementName=PART_BelowButton, Path=Visibility, Mode=TwoWay}" />
+                                                        <Separator
+                                                                Height="2"
+                                                                Margin="30,0,0,0"
+                                                                Background="{StaticResource ContentBackgroundAlt2}" />
+                                                        <tools:RibbonButton
+                                                                Command="tools:RibbonCommands.MinimizeRibbon"
+                                                                Foreground="{StaticResource SecondaryForeground}"
+                                                                IsSelected="{Binding ElementName=PART_MinimizeButton, Path=IsSelected, Mode=TwoWay}"
+                                                                IsToggle="True"
+                                                                Label="{Binding Source={StaticResource ResourceWrapperKey}, Path=MinimizeRibbon}"
+                                                                Style="{StaticResource SyncfusionQATMenuItemRibbonButtonStyle}" />
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                        </tools:DropDownButton>
+                                    </StackPanel>
+                                </tools:DropDownButton>
+                            </Grid>
+                        </tools:TwoItemsLayoutPanelEx>
+
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="AllowToolTipOnQAT" Value="True">
+                            <Setter TargetName="PART_PopupButton" Property="ToolTip" Value="{Binding Source={StaticResource ResourceWrapperKey}, Path=QATToolTip}" />
+                        </Trigger>
+                        <Trigger Property="HasOverflowChildren" Value="True">
+                            <Setter TargetName="PART_PopupButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_OverflowButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="PART_QATMenu" Property="HasItems" Value="True">
+                            <Setter TargetName="TopSeperator" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger SourceName="PART_QATMenuOverFlow" Property="HasItems" Value="True">
+                            <Setter TargetName="TopSeperatorOverFlow" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="HasGeometry" Value="False">
+                            <Setter TargetName="PART_AboveButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_BelowButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                            <Setter Property="FrameworkElement.MinHeight" Value="40" />
+                            <Setter Property="Margin" Value="0,5,0,0" />
+                            <Setter TargetName="PART_PopupButton" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="PART_OverflowButton" Property="Height" Value="28" />
+                            <Setter TargetName="PART_OverflowButton" Property="VerticalAlignment" Value="Top" />
+                            <Setter TargetName="PART_OverflowPanel" Property="Height" Value="40" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource SyncfusionQuickAccessToolBarStyle}" TargetType="{x:Type tools:QuickAccessToolBar}" />
+    
+</ResourceDictionary>

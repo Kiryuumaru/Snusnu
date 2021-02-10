@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snusnu", "Snusnu\Snusnu.csproj", "{0E789BE7-8FE2-476D-B4AA-50F64696D0DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snusnu", "Snusnu\Snusnu.csproj", "{0E789BE7-8FE2-476D-B4AA-50F64696D0DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syncfusion.Themes.MaterialDark.WPF_NET50", "Syncfusion.Themes.MaterialDark.WPF\Syncfusion.Themes.MaterialDark.WPF_NET50.csproj", "{6B4541DE-D29E-4746-86E6-F57FF4841048}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0E789BE7-8FE2-476D-B4AA-50F64696D0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E789BE7-8FE2-476D-B4AA-50F64696D0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E789BE7-8FE2-476D-B4AA-50F64696D0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

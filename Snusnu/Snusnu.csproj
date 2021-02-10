@@ -15,14 +15,6 @@
   <ItemGroup>
 <PackageReference Include="Binance.Net" Version="6.8.0" />
 <PackageReference Include="Syncfusion.Licensing" Version="18.4.0.42" />
-<PackageReference Include="Syncfusion.Shared.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.Tools.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.Data.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.SfGrid.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.SfChart.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.SfDiagram.WPF" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.Themes.Metro.Wpf" Version="18.4.0.39" />
-<PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="18.4.0.39" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +23,10 @@
 
   <ItemGroup>
     <Folder Include="ViewModels\Windows\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Syncfusion.Themes.MaterialDark.WPF\Syncfusion.Themes.MaterialDark.WPF_NET50.csproj" />
   </ItemGroup>
 
   
