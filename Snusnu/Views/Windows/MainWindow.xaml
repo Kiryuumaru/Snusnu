@@ -4,10 +4,30 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Snusnu.Views.Windows"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-    
-    </Grid>
+    <syncfusion:DockingManager x:Name="SyncDockingManager" UseDocumentContainer="True"
+    PersistState="True">
+
+        <ContentControl x:Name="SolutionExplorer" syncfusion:DockingManager.Header="Solution Explorer"
+    syncfusion:DockingManager.SideInDockedMode="Right"/>
+
+        <ContentControl x:Name="ToolBox" syncfusion:DockingManager.Header="Toolbox"
+    syncfusion:DockingManager.State="AutoHidden" />
+
+        <ContentControl x:Name="Output" syncfusion:DockingManager.Header="Output"
+    syncfusion:DockingManager.SideInDockedMode="Tabbed"
+	syncfusion:DockingManager.TargetNameInDockedMode="SolutionExplorer"/>
+
+        <ContentControl x:Name="EndPage" syncfusion:DockingManager.Header="End Page"
+     syncfusion:DockingManager.State="Document" >
+            <TextBlock Text="Any built-in themes can applied to the required control by VisualStyle attached property of the SfSkinManager." />
+        </ContentControl>
+        <ContentControl x:Name="StartPage" syncfusion:DockingManager.Header="Start Page"
+     syncfusion:DockingManager.State="Document" >
+            <TextBlock Text="Any built-in themes can applied to the required control by VisualStyle attached property of the SfSkinManager." />
+        </ContentControl>
+    </syncfusion:DockingManager>
 </Window>

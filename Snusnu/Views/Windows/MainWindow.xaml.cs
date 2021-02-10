@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syncfusion.SfSkinManager;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,17 @@ namespace Snusnu.Views.Windows
         public MainWindow()
         {
             InitializeComponent();
+            string style = "MaterialDark";
+            SkinHelper styleInstance = null;
+            var skinHelpterStr = "Syncfusion.Themes." + style + ".WPF." + style + "SkinHelper, Syncfusion.Themes." + style + ".WPF";
+            Type skinHelpterType = Type.GetType(skinHelpterStr);
+            if (skinHelpterType != null)
+                styleInstance = Activator.CreateInstance(skinHelpterType) as SkinHelper;
+            if (styleInstance != null)
+            {
+                SfSkinManager.RegisterTheme("MaterialDark", styleInstance);
+            }
+            SfSkinManager.SetTheme(this, new Theme("MaterialDark"));
         }
     }
 }
