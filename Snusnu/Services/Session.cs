@@ -1,25 +1,45 @@
 ﻿using Snusnu.Services.SessionObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Snusnu.Services
 {
-    public static class Session
+    public class Session
     {
         #region Properties
 
-        public static BinanceWrapper BinanceWrapper { get; private set; }
+        public string AbsolutePath { get; private set; }
+        public DependencyObject DependencyObject { get; private set; }
+        public Datastore Datastore { get; private set; }
+        public Appearance Appearance { get; private set; }
+        public BinanceWrapper BinanceWrapper { get; private set; }
 
         #endregion
 
         #region Initializers
 
-        public static async Task Initialize(string filename)
+        private Session() { }
+        public static async Task<Session> Start(DependencyObject dependencyObject, string absolutePath)
         {
-            BinanceWrapper = await BinanceWrapper.Initialize(filename);
+            try
+            {
+                using var write = File.OpenWrite(absolutePath);
+                write.Close();
+            }
+            catch
+            {
+                return null;
+            }
+            var session = new Session()
+            {
+                DependencyObject = dependencyObject,
+                AbsolutePath = absolutePath
+            };
+            session.Datastore = await Datastore.Initialize(session);
+            session.Appearance = await Appearance.Initialize(session);
+            session.BinanceWrapper = await BinanceWrapper.Initialize(session);
+            return session;
         }
 
         #endregion

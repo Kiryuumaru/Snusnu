@@ -13,8 +13,44 @@
   </ItemGroup>
 
   <ItemGroup>
-<PackageReference Include="Binance.Net" Version="6.8.0" />
-<PackageReference Include="Syncfusion.Licensing" Version="18.4.0.42" />
+    <PackageReference Include="Binance.Net" Version="6.8.2" />
+    <PackageReference Include="Syncfusion.Licensing" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfScheduler.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfChart.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfDiagram.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfShared.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfGauge.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfKanban.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfTreeMap.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfMaps.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfSmithChart.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfSunburstChart.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfBulletGraph.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfHeatMap.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.PropertyGrid.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfColorPalette.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfTextInputLayout.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfRadialMenu.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Tools.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfBusyIndicator.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfProgressBar.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfHubTile.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Tools.WPF.Classic" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfAccordion.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfTreeView.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfTreeNavigator.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.PdfViewer.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfRichTextBoxAdv.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfRichTextRibbon.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Edit.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfImageEditor.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Themes.Metro.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Themes.MaterialLight.WPF" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="18.4.0.39" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,11 +60,5 @@
   <ItemGroup>
     <Folder Include="ViewModels\Windows\" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Syncfusion.Themes.MaterialDark.WPF\Syncfusion.Themes.MaterialDark.WPF_NET50.csproj" />
-  </ItemGroup>
-
-  
 
 </Project>

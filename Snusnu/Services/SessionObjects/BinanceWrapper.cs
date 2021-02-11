@@ -14,29 +14,29 @@ namespace Snusnu.Services.SessionObjects
     {
         #region Datastore Logic
 
-        public string Filename { get; private set; }
-
+        private Session session;
         private string contents = "";
         private bool isBusy = false;
         private int requestSave = 0;
 
         private BinanceWrapper() { }
 
-        public static async Task<BinanceWrapper> Initialize(string filename)
+        public static async Task<BinanceWrapper> Initialize(Session session)
         {
-            var ret = new BinanceWrapper() { Filename = filename };
-            using var write = File.OpenWrite(filename);
-            write.Close();
+            var ret = new BinanceWrapper()
+            {
+                session = session
+            };
             await Task.Run(delegate
             {
-                ret.contents = File.Exists(filename) ? File.ReadAllText(filename) : "";
+                ret.contents = File.Exists(session.AbsolutePath) ? File.ReadAllText(session.AbsolutePath) : "";
             });
             return ret;
         }
 
         private async void Set(string key, string value)
         {
-            contents = Helpers.BlobSetValue(contents, key, value);
+            contents = CommonHelpers.BlobSetValue(contents, key, value);
             requestSave++;
             if (isBusy) return;
             isBusy = true;
@@ -45,8 +45,8 @@ namespace Snusnu.Services.SessionObjects
                 try
                 {
                     string contentsCopy = contents;
-                    Directory.CreateDirectory(Filename);
-                    File.WriteAllText(Filename, contentsCopy);
+                    Directory.CreateDirectory(session.AbsolutePath);
+                    File.WriteAllText(session.AbsolutePath, contentsCopy);
                 }
                 catch { }
                 await Task.Delay(250);
@@ -57,7 +57,7 @@ namespace Snusnu.Services.SessionObjects
 
         private string Get(string key)
         {
-            return Helpers.BlobGetValue(contents, key);
+            return CommonHelpers.BlobGetValue(contents, key);
         }
 
         #endregion

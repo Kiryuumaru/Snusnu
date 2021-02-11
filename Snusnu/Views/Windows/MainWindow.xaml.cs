@@ -1,4 +1,5 @@
 ﻿using Syncfusion.SfSkinManager;
+using Syncfusion.Windows.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,42 +19,26 @@ namespace Snusnu.Views.Windows
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : ChromelessWindow
     {
-        private bool isDark = false;
         public MainWindow()
         {
             InitializeComponent();
-            AddTheme("MaterialDark");
-            AddTheme("MaterialLight");
         }
 
-        private void AddTheme(string style)
+        private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            SkinHelper styleInstance = null;
-            var skinHelpterStr = "Syncfusion.Themes." + style + ".WPF." + style + "SkinHelper, Syncfusion.Themes." + style + ".WPF";
-            Type skinHelpterType = Type.GetType(skinHelpterStr);
-            if (skinHelpterType != null)
-                styleInstance = Activator.CreateInstance(skinHelpterType) as SkinHelper;
-            if (styleInstance != null)
-            {
-                SfSkinManager.RegisterTheme(style, styleInstance);
-            }
-            SfSkinManager.SetTheme(this, new Theme(style));
+
         }
 
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            if (isDark)
-            {
-                isDark = false;
-                SfSkinManager.SetTheme(this, new Theme("MaterialLight"));
-            }
-            else
-            {
-                isDark = true;
-                SfSkinManager.SetTheme(this, new Theme("MaterialDark"));
-            }
+
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
