@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syncfusion.Themes.MaterialLight.WPF_2013", "Syncfusion.Themes.MaterialLight.WPF_2015.csproj", "{109e6e00-4b15-4321-83de-0799e186b70e}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug-Xml|Any CPU = Debug-Xml|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Release-Xml|Any CPU = Release-Xml|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Debug-Xml|Any CPU.ActiveCfg = Debug-Xml|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Debug-Xml|Any CPU.Build.0 = Debug-Xml|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Release|Any CPU.Build.0 = Release|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Release-Xml|Any CPU.ActiveCfg = Release-Xml|Any CPU
+		{109e6e00-4b15-4321-83de-0799e186b70e}.Release-Xml|Any CPU.Build.0 = Release-Xml|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

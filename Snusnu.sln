@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Snusnu", "Snusnu\Snusnu.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syncfusion.Themes.MaterialDark.WPF_NET50", "Syncfusion.Themes.MaterialDark.WPF\Syncfusion.Themes.MaterialDark.WPF_NET50.csproj", "{6B4541DE-D29E-4746-86E6-F57FF4841048}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Syncfusion.Themes.MaterialLight.WPF_NET50", "Syncfusion.Themes.MaterialLight.WPF\Syncfusion.Themes.MaterialLight.WPF_NET50.csproj", "{CF0260FB-2E0F-478F-BB24-9F403F2EE933}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B4541DE-D29E-4746-86E6-F57FF4841048}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF0260FB-2E0F-478F-BB24-9F403F2EE933}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF0260FB-2E0F-478F-BB24-9F403F2EE933}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF0260FB-2E0F-478F-BB24-9F403F2EE933}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF0260FB-2E0F-478F-BB24-9F403F2EE933}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

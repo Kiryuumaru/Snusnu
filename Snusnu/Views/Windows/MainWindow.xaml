@@ -7,7 +7,7 @@
         xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
         xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="600" Width="900">
     <syncfusion:DockingManager x:Name="SyncDockingManager" UseDocumentContainer="True"
     PersistState="True">
 
@@ -27,7 +27,14 @@
         </ContentControl>
         <ContentControl x:Name="StartPage" syncfusion:DockingManager.Header="Start Page"
      syncfusion:DockingManager.State="Document" >
-            <TextBlock Text="Any built-in themes can applied to the required control by VisualStyle attached property of the SfSkinManager." />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="Any built-in themes can applied to the required control by VisualStyle attached property of the SfSkinManager." />
+                <Button Grid.Row="1" x:Name="button" Content="Button" Click="button_Click"/>
+            </Grid>
         </ContentControl>
     </syncfusion:DockingManager>
 </Window>

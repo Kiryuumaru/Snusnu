@@ -1,0 +1,550 @@
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:shared="clr-namespace:Syncfusion.Windows.Shared;assembly=Syncfusion.Shared.WPF"
+    xmlns:tools="clr-namespace:Syncfusion.Windows.Tools.Controls;assembly=Syncfusion.Tools.WPF"
+    xmlns:provider="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+    xmlns:windows_shared="clr-namespace:Syncfusion.Windows;assembly=Syncfusion.Shared.Wpf">
+
+    <ResourceDictionary.MergedDictionaries>
+        <provider:ResourceDictionaryProvider DictionaryName="Common" ThemeName="MaterialLight"/>
+        <provider:ResourceDictionaryProvider DictionaryName="Brushes" ThemeName="MaterialLight"/>
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialLight.WPF;component/Ribbon/RibbonItems.xaml"/>
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialLight.WPF;component/Ribbon/RibbonTab.xaml" />
+        <ResourceDictionary Source="/Syncfusion.Themes.MaterialLight.WPF;component/Ribbon/RibbonButton.xaml"/>
+
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--  RibbonBarLauncherButton style  -->
+    <Style x:Key="SyncfusionLauncherRibbonButtonStyle" TargetType="{x:Type tools:RibbonButton}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="BorderThickness" Value="{StaticResource MaterialLight.BorderThickness}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Height" Value="13" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:RibbonButton}">
+                    <Border
+                        Name="Part_OuterBorder"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Canvas
+                            Width="8"
+                            Height="8"
+                            Margin="1,0,0,0"
+                            Background="Transparent "
+                            SnapsToDevicePixels="True">
+                            <Path x:Name="path" Stroke="{StaticResource IconColor}">
+                                <Path.Data>
+                                    <GeometryGroup>
+                                        <LineGeometry StartPoint="0.5,0" EndPoint="0.5,6" />
+                                        <LineGeometry StartPoint="0,0.5" EndPoint="6,0.5" />
+                                        <LineGeometry StartPoint="3,3.5" EndPoint="4,3.5" />
+                                        <LineGeometry StartPoint="4,4.5" EndPoint="6,4.5" />
+                                        <LineGeometry StartPoint="4,5.5" EndPoint="6,5.5" />
+                                        <LineGeometry StartPoint="3,6.5" EndPoint="7,6.5" />
+                                        <LineGeometry StartPoint="6.5,3" EndPoint="6.5,7" />
+                                    </GeometryGroup>
+                                </Path.Data>
+                            </Path>
+                        </Canvas>
+                        <!--  </Border>  -->
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Part_OuterBorder" Property="Background" Value="{StaticResource SecondaryHoverBackground}" />
+                            <Setter TargetName="path" Property="Stroke" Value="{StaticResource IconColor}" />
+                        </Trigger>
+
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Part_OuterBorder" Property="Background" Value="{StaticResource SecondarySelectionBackground}" />
+                            <Setter TargetName="path" Property="Stroke" Value="{StaticResource IconColor}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  RibbonBar style  -->
+    <Style x:Key="SyncfusionRibbonBarStyle" TargetType="{x:Type tools:RibbonBar}">
+        <Setter Property="Background" Value="{StaticResource ContentBackgroundAlt2}" />
+        <Setter Property="CollapseImage" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type tools:Ribbon}}, Path=RibbonBarCollapseImage}" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="FontSize" Value="11.5" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:RibbonBar}">
+                    <ControlTemplate.Resources>
+                        <Storyboard x:Key="MouseEnterStoryBoard">
+                            <DoubleAnimationUsingKeyFrames
+                                BeginTime="00:00:00"
+                                Storyboard.TargetName="BarHoverGrid"
+                                Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:01" Value="1" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="MouseLeaveStoryBoard">
+                            <DoubleAnimationUsingKeyFrames
+                                BeginTime="00:00:00"
+                                Storyboard.TargetName="BarHoverGrid"
+                                Storyboard.TargetProperty="(UIElement.Opacity)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:01" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </ControlTemplate.Resources>
+                    <Grid Margin="1,0,-5,0">
+                        <Grid
+                            x:Name="BarHoverGrid"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2"
+                            Width="Auto"
+                            Height="Auto"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Background="{StaticResource ContentBackgroundAlt2}"
+                            ClipToBounds="True"
+                            Opacity="0">
+                            <Rectangle
+                                Height="Auto"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Fill="{StaticResource ContentBackgroundAlt2}"
+                                Stroke="{StaticResource BorderAlt}"
+                                StrokeThickness="{StaticResource MaterialLight.StrokeThickness1}" />
+                        </Grid>
+                        <Border>
+                            <Grid x:Name="barGrid">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition x:Name="barRow" Height="74"/>
+                                    <RowDefinition MinHeight="17" />
+                                </Grid.RowDefinitions>
+                                <Border Name="PART_RibbonBarBorder" Margin="3,0,3,0">
+                                    <Border Name="PART_presenterBorder" Grid.Row="0">
+                                        <ItemsPresenter />
+                                    </Border>
+                                </Border>
+                                <Border Name="PART_headerBorder" Grid.Row="1">
+                                    <DockPanel>
+                                        <tools:RibbonButton
+                                            Name="PART_DialogLauncherButton"
+                                            Width="15"
+                                            Height="13"
+                                            Margin="0,2,0,0"
+                                            Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommand}"
+                                            CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandParameter}"
+                                            CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandTarget}"
+                                            DockPanel.Dock="Right"
+                                            SizeForm="ExtraSmall"
+											IconTemplate="{TemplateBinding IconTemplate}"
+                                            SmallIcon="{TemplateBinding CollapseImage}"
+                                            Style="{StaticResource SyncfusionLauncherRibbonButtonStyle}"
+                                            ToolTip="{TemplateBinding LauncherToolTip}"
+                                            ToolTipService.ShowOnDisabled="{Binding Path=(ToolTipService.ShowOnDisabled), RelativeSource={RelativeSource TemplatedParent}}"
+                                            Visibility="{TemplateBinding IsLauncherButtonVisible,
+                                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <tools:RibbonAutomatableTextBlock
+                                            Name="header"
+                                            Margin="0,0,0,2"
+                                            VerticalAlignment="Center"
+                                            Foreground="{StaticResource ContentForeground}"
+                                            Style="{StaticResource SyncfusionRibbonAutomatableTextBlockStyle}"
+                                            Text="{TemplateBinding Header}"
+                                            TextAlignment="Center" />
+                                    </DockPanel>
+                                </Border>
+                                <Border
+                                    Grid.RowSpan="2"
+                                    Grid.Column="1"
+                                    Width="1"
+                                    Height="{TemplateBinding Height}"
+                                    HorizontalAlignment="Left"
+                                    Background="{StaticResource BorderAlt}"
+                                    SnapsToDevicePixels="True" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="shared:SkinStorage.EnableTouch" Value="True"/>
+                                <Condition Property="tools:SimplifiedLayoutSettings.LayoutMode" Value="Normal"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Margin" TargetName="PART_headerBorder" Value="5,0,5,0"/>
+                            <Setter TargetName="barRow" Property="Height" Value="104"/>
+                        </MultiTrigger>
+                        <Trigger Property="tools:SimplifiedLayoutSettings.LayoutMode" Value="Simplified">
+                            <Setter TargetName="PART_headerBorder" Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter TargetName="barRow" Property="Height" Value="43"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <tools:GroupPanel/>
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="PanelState" Value="ExtraSmall">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type tools:RibbonBar}">
+                            <ControlTemplate.Resources>
+                                <Storyboard x:Key="MouseEnterStoryBoard">
+                                    <DoubleAnimationUsingKeyFrames
+                                        BeginTime="00:00:00"
+                                        Storyboard.TargetName="BarHoverGrid"
+                                        Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:01" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                                <Storyboard x:Key="MouseLeaveStoryBoard">
+                                    <DoubleAnimationUsingKeyFrames
+                                        BeginTime="00:00:00"
+                                        Storyboard.TargetName="BarHoverGrid"
+                                        Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:01" Value="0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </ControlTemplate.Resources>
+                            <tools:DropDownButton
+                                Name="PART_RibbonDropDownButton"
+                                Label="{TemplateBinding Header}"
+                                SizeForm="ExtraSmall"
+								IconTemplate="{TemplateBinding IconTemplate}"
+                                SmallIcon="{TemplateBinding CollapseImage}">
+                                <Grid
+                                    x:Name="BarHoverGrid"
+                                    Grid.RowSpan="2"
+                                    Width="Auto"
+                                    Height="Auto"
+                                    Margin="0,0,1,1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="{StaticResource SecondaryHoverBackground}"
+                                    ClipToBounds="True"
+                                    Opacity="0">
+                                    <Rectangle
+                                        Height="Auto"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Fill="{StaticResource SecondaryHoverBackground}"
+                                        Stroke="{x:Null}"
+                                        StrokeThickness="{StaticResource MaterialLight.StrokeThickness}" />
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="5" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition>
+                                            <RowDefinition.Style>
+                                                <Style>
+                                                    <Setter Property="RowDefinition.Height" Value="70" />
+                                                    <Style.Triggers>
+                                                        <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                                                            <Setter Property="RowDefinition.MinHeight" Value="100" />
+                                                        </Trigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </RowDefinition.Style>
+                                        </RowDefinition>
+                                        <RowDefinition Height="17" />
+                                    </Grid.RowDefinitions>
+                                    <Border
+                                        Name="PART_RibbonBarBorder" 
+                                        Background="{TemplateBinding Background}"
+                                        Margin="3,0,3,0">
+                                        <Border Name="PART_PresenterBorder" Grid.Row="0">
+                                            <ItemsPresenter />
+                                        </Border>
+                                    </Border>
+                                    <Border Name="PART_headerBorder" Grid.Row="1">
+                                        <DockPanel>
+                                            <tools:RibbonButton
+                                                Name="PART_DialogLauncherButton"
+                                                Width="15"
+                                                Height="14"
+                                                Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommand}"
+                                                CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandParameter}"
+                                                CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandTarget}"
+                                                DockPanel.Dock="Right"
+                                                SizeForm="ExtraSmall"
+												IconTemplate="{TemplateBinding IconTemplate}"
+                                                SmallIcon="{TemplateBinding CollapseImage}"
+                                                Style="{StaticResource SyncfusionLauncherRibbonButtonStyle}"
+                                                ToolTip="{TemplateBinding LauncherToolTip}"
+                                                ToolTipService.ShowOnDisabled="{Binding Path=(ToolTipService.ShowOnDisabled), RelativeSource={RelativeSource TemplatedParent}}"
+                                                Visibility="{TemplateBinding IsLauncherButtonVisible,
+                                                                             Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <TextBlock
+                                                Name="header"
+                                                VerticalAlignment="Center"
+                                                Foreground="{StaticResource ContentForeground}"
+                                                Text="{TemplateBinding Header}"
+                                                TextAlignment="Center" />
+                                        </DockPanel>
+                                    </Border>
+                                    <Line
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1"
+                                        Width="1"
+                                        Stroke="{StaticResource BorderAlt}"
+                                        X1="1"
+                                        Y1="87"
+                                        Y2="1" />
+                                </Grid>
+                            </tools:DropDownButton>
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                                    <BeginStoryboard Storyboard="{StaticResource MouseLeaveStoryBoard}" />
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                                    <BeginStoryboard Storyboard="{StaticResource MouseEnterStoryBoard}" />
+                                </EventTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Margin" Value="0" />
+            </Trigger>
+
+            <Trigger Property="PanelState" Value="Collapsed">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type tools:RibbonBar}">
+                            <ControlTemplate.Resources>
+                                <Storyboard x:Key="MouseEnterStoryBoard">
+                                    <DoubleAnimationUsingKeyFrames
+                                        BeginTime="00:00:00"
+                                        Storyboard.TargetName="BarHoverGrid"
+                                        Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:01" Value="1" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                                <Storyboard x:Key="MouseLeaveStoryBoard">
+                                    <DoubleAnimationUsingKeyFrames
+                                        BeginTime="00:00:00"
+                                        Storyboard.TargetName="BarHoverGrid"
+                                        Storyboard.TargetProperty="(UIElement.Opacity)">
+                                        <SplineDoubleKeyFrame KeyTime="00:00:01" Value="0" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </ControlTemplate.Resources>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="5" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" BorderThickness="{TemplateBinding BorderThickness}">
+
+                                    <Border Name="PART_InnerBorder" BorderBrush="Transparent">
+                                        <Grid>
+                                            <tools:DropDownButton
+                                                Name="PART_RibbonDropDownButton"
+                                                Label="{TemplateBinding Header}"
+												IconTemplate="{TemplateBinding IconTemplate}"
+                                                LargeIcon="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CollapseImage}"
+                                                Style="{StaticResource SyncfusionRibbonBarDropDownButtonStyle}"
+                                                Visibility="Hidden">
+
+                                                <Border
+                                                    Name="PART_PopupBorder"
+                                                    Background="{StaticResource ContentBackgroundAlt2}"
+                                                    BorderBrush="{StaticResource BorderAlt}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                                    <Grid>
+                                                        <Grid
+                                                            x:Name="BarHoverGrid"
+                                                            Grid.RowSpan="2"
+                                                            Width="Auto"
+                                                            Height="Auto"
+                                                            Margin="0,0,1,1"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch"
+                                                            Background="{StaticResource ContentBackgroundAlt2}"
+                                                            ClipToBounds="True"
+                                                            Opacity="0">
+                                                            <Rectangle
+                                                                Height="Auto"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch"
+                                                                Fill="{StaticResource BorderAlt}"
+                                                                Stroke="{StaticResource BorderAlt}"
+                                                                StrokeThickness="{StaticResource MaterialLight.StrokeThickness1}" />
+                                                        </Grid>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition>
+                                                                    <RowDefinition.Style>
+                                                                        <Style>
+                                                                            <Setter Property="RowDefinition.Height" Value="70" />
+                                                                            <Style.Triggers>
+                                                                                <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                                                                                    <Setter Property="RowDefinition.MinHeight" Value="100" />
+                                                                                </Trigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </RowDefinition.Style>
+                                                                </RowDefinition>
+                                                                <RowDefinition Height="17" />
+                                                            </Grid.RowDefinitions>
+                                                            <Border
+                                                                Name="PART_RibbonBarBorder"
+                                                                Margin="3,0,3,0"
+                                                                Background="{TemplateBinding Background}"
+                                                                BorderBrush="{TemplateBinding BorderBrush}">
+                                                                <Border Name="PART_PresenterBorder" Grid.Row="0">
+                                                                    <ItemsPresenter />
+                                                                </Border>
+                                                            </Border>
+                                                            <Border
+                                                                Name="PART_headerBorder"
+                                                                Grid.Row="1"
+                                                                Background="{TemplateBinding Background}">
+                                                                <DockPanel>
+                                                                    <tools:RibbonButton
+                                                                        Name="PART_DialogLauncherButton"
+                                                                        Width="15"
+                                                                        Height="14"
+                                                                        Command="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommand}"
+                                                                        CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandParameter}"
+                                                                        CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=LauncherCommandTarget}"
+                                                                        DockPanel.Dock="Right"
+                                                                        SizeForm="ExtraSmall"
+																		IconTemplate="{TemplateBinding IconTemplate}"
+                                                                        SmallIcon="{TemplateBinding CollapseImage}"
+                                                                        Style="{StaticResource SyncfusionLauncherRibbonButtonStyle}"
+                                                                        ToolTip="{TemplateBinding LauncherToolTip}"
+                                                                        ToolTipService.ShowOnDisabled="{Binding Path=(ToolTipService.ShowOnDisabled), RelativeSource={RelativeSource TemplatedParent}}"
+                                                                        Visibility="{TemplateBinding IsLauncherButtonVisible,
+                                                                                                     Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                    <TextBlock
+                                                                        VerticalAlignment="Center"
+                                                                        Foreground="{StaticResource ContentForeground}"
+                                                                        Text="{TemplateBinding Header}"
+                                                                        TextAlignment="Center" />
+                                                                </DockPanel>
+                                                            </Border>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Border>
+                                            </tools:DropDownButton>
+                                        </Grid>
+                                    </Border>
+                                </Border>
+                                <Line
+                                    x:Name="barLine"
+                                    Grid.Column="1"
+                                    Width="1"
+                                    Stroke="{StaticResource BorderAlt}"
+                                    X1="1"
+                                    Y1="87"
+                                    Y2="1" />
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="tools:SimplifiedLayoutSettings.LayoutMode" Value="Simplified">
+                                    <Setter TargetName="PART_headerBorder" Property="Visibility" Value="Collapsed"/>
+                                    <Setter Property="Margin" Value="0"/>
+                                </Trigger>
+                                <Trigger Property="PanelState" Value="Collapsed">
+                                    <Setter TargetName="PART_RibbonDropDownButton" Property="Visibility" Value="Visible" />
+                                </Trigger>
+                                <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                                    <Setter TargetName="barLine" Property="Y1" Value="120" />
+                                </Trigger>
+                                <EventTrigger RoutedEvent="Mouse.MouseLeave">
+                                    <BeginStoryboard Storyboard="{StaticResource MouseLeaveStoryBoard}" />
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="Mouse.MouseEnter">
+                                    <BeginStoryboard Storyboard="{StaticResource MouseEnterStoryBoard}" />
+                                </EventTrigger>
+                                <Trigger Property="shared:SkinStorage.EnableTouch" Value="True">
+                                    <Setter TargetName="barLine" Property="Y1" Value="120" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+
+            <Trigger Property="IsLargeButtonPanel" Value="true">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <tools:LargeButtonPanel />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="tools:SimplifiedLayoutSettings.LayoutMode" Value="Simplified">
+                <Setter Property="ItemsPanel">
+                    <Setter.Value>
+                        <ItemsPanelTemplate>
+                            <tools:LargeButtonPanel />
+                        </ItemsPanelTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Background" Value="{StaticResource ContentBackgroundAlt}" />
+                <Setter Property="Foreground" Value="{StaticResource DisabledForeground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource BorderAlt}" />
+            </Trigger>
+
+        </Style.Triggers>
+    </Style>
+
+    <Style BasedOn="{StaticResource SyncfusionRibbonBarStyle}" TargetType="{x:Type tools:RibbonBar}" />
+
+    <!--  RibbonPage Style  -->
+    <Style x:Key="SyncfusionRibbonPageStyle" TargetType="{x:Type tools:RibbonPage}">
+        <Setter Property="Margin" Value="0,25,0,0" />
+        <Setter Property="FontSize" Value="{StaticResource MaterialLight.TitleTextStyle}" />
+        <Setter Property="FontFamily" Value="{StaticResource MaterialLight.ThemeFontFamily}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type tools:RibbonPage}">
+                    <AdornerDecorator x:Name="PART_Adorner">
+                        <Border
+                                Name="PART_MainBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{StaticResource MaterialLight.BorderThickness1}">
+                            <DockPanel
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="Transparent">
+                                <ContentPresenter Content="{TemplateBinding StatusBar}" DockPanel.Dock="Bottom" />
+                                <AdornerDecorator Panel.ZIndex="100" DockPanel.Dock="Top">
+                                    <ContentPresenter Content="{TemplateBinding Ribbon}" />
+                                </AdornerDecorator>
+                                <ContentPresenter Content="{TemplateBinding Content}" DockPanel.Dock="Bottom" />
+                            </DockPanel>
+                        </Border>
+                    </AdornerDecorator>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource SyncfusionRibbonPageStyle}" TargetType="{x:Type tools:RibbonPage}" />
+</ResourceDictionary>
