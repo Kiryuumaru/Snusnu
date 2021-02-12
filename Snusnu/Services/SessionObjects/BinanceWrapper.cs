@@ -1,8 +1,13 @@
 ﻿using Binance.Net;
 using Binance.Net.Objects.Spot;
+using Binance.Net.Objects.Spot.MarketData;
+using Binance.Net.Objects.Spot.UserStream;
 using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Objects;
+using Snusnu.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,74 +17,179 @@ namespace Snusnu.Services.SessionObjects
 {
     public class BinanceWrapper
     {
-        #region Datastore Logic
-
-        private Session session;
-        private string contents = "";
-        private bool isBusy = false;
-        private int requestSave = 0;
-
-        private BinanceWrapper() { }
-
-        public static async Task<BinanceWrapper> Initialize(Session session)
-        {
-            var ret = new BinanceWrapper()
-            {
-                session = session
-            };
-            await Task.Run(delegate
-            {
-                ret.contents = File.Exists(session.AbsolutePath) ? File.ReadAllText(session.AbsolutePath) : "";
-            });
-            return ret;
-        }
-
-        private async void Set(string key, string value)
-        {
-            contents = CommonHelpers.BlobSetValue(contents, key, value);
-            requestSave++;
-            if (isBusy) return;
-            isBusy = true;
-            while (requestSave > 0)
-            {
-                try
-                {
-                    string contentsCopy = contents;
-                    Directory.CreateDirectory(session.AbsolutePath);
-                    File.WriteAllText(session.AbsolutePath, contentsCopy);
-                }
-                catch { }
-                await Task.Delay(250);
-                requestSave--;
-            }
-            isBusy = false;
-        }
-
-        private string Get(string key)
-        {
-            return CommonHelpers.BlobGetValue(contents, key);
-        }
-
-        #endregion
-
         #region Properties
 
+        private Session session;
+        private ApiCredentials credentials;
         private BinanceClient client;
+        private BinanceSocketClient socket;
+        private string listenKey;
 
         private string ApiKey
         {
-            get => Get("apik");
-            set => Set("apik", value);
+            get => session.Datastore.GetValue("apik");
+            set => session.Datastore.SetValue("apik", value);
         }
 
         private string ApiSecret
         {
-            get => Get("apis");
-            set => Set("apis", value);
+            get => session.Datastore.GetValue("apis");
+            set => session.Datastore.SetValue("apis", value);
         }
+
+        public readonly ObservableCollection<Wallet> Wallets = new ObservableCollection<Wallet>();
+        public readonly ObservableCollection<Market> Markets = new ObservableCollection<Market>();
 
         public bool IsCredentialsReady => !string.IsNullOrEmpty(ApiKey) && !string.IsNullOrEmpty(ApiSecret);
         public bool IsStarted => client != null;
+
+        #endregion
+
+        #region Initializers
+
+        private BinanceWrapper() { }
+        public static async Task<BinanceWrapper> Initialize(Session session)
+        {
+            return await Task.Run(delegate
+            {
+                var wrapper = new BinanceWrapper() { session = session };
+                wrapper.LazyInitialize();
+                return wrapper;
+            });
+        }
+
+        private async void LazyInitialize()
+        {
+            await Task.Delay(Defaults.RetrySpan);
+            session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Starting . . .", LogType.Info));
+            while (true)
+            {
+                if (!IsCredentialsReady)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Credentials not ready", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                var apiCredentials = new ApiCredentials(ApiKey, ApiSecret);
+                var clientInstance = new BinanceClient(new BinanceClientOptions { ApiCredentials = apiCredentials });
+                var userStream = await clientInstance.Spot.UserStream.StartUserStreamAsync();
+                if (!userStream.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Stream key request failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                var streamListenKey = userStream.Data;
+                var socketClient = new BinanceSocketClient(new BinanceSocketClientOptions { ApiCredentials = apiCredentials });
+                var socketStream = socketClient.Spot.SubscribeToUserDataUpdates(streamListenKey, AccountInfoUpdate, OrderUpdate, OrderListUpdate, PositionsUpdate, BalanceUpdate);
+                if (!socketStream.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "User update stream subscribe failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                socketStream.Data.ConnectionLost += delegate
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection lost", LogType.Info));
+                };
+                socketStream.Data.ConnectionRestored += delegate
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection restored", LogType.Info));
+                };
+                socketStream.Data.ActivityPaused += delegate
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity paused", LogType.Info));
+                };
+                socketStream.Data.ActivityUnpaused += delegate
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity unpaused", LogType.Info));
+                };
+                credentials = apiCredentials;
+                client = clientInstance;
+                listenKey = streamListenKey;
+                socket = socketClient;
+                session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Ready", LogType.Info));
+                StartRegularRefresher();
+                break;
+            }
+        }
+
+        public void Stop()
+        {
+            client.Spot.UserStream.StopUserStream(listenKey);
+            session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Stream key stopped", LogType.Info));
+        }
+
+        #endregion
+
+        #region Updaters
+
+        private void StartRegularRefresher()
+        {
+            Task.Run(async delegate
+            {
+                while (true)
+                {
+                    var systemInfo = await client.Spot.System.GetExchangeInfoAsync();
+                    if (!systemInfo.Success)
+                    {
+                        session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system exchange info failed", LogType.Error));
+                        await Task.Delay(Defaults.RetrySpan);
+                        continue;
+                    }
+                    var allPrices = await client.Spot.Market.GetAllPricesAsync();
+                    if (!allPrices.Success)
+                    {
+                        session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server get markets failed", LogType.Error));
+                        await Task.Delay(Defaults.RetrySpan);
+                        continue;
+                    }
+                    List<(BinanceSymbol Symbol, BinancePrice Price)> symbols = new List<(BinanceSymbol Symbol, BinancePrice Price)>();
+                    foreach (var symbol in systemInfo.Data.Symbols)
+                    {
+                        var price = allPrices.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
+                        if (price != null)
+                        {
+                            symbols.Add((symbol, price));
+                        }
+                    }
+                    await Task.Delay(Defaults.RefreshSpan);
+                }
+            });
+            Task.Run(async delegate
+            {
+                while (true)
+                {
+                    await client.Spot.UserStream.KeepAliveUserStreamAsync(listenKey);
+                    await Task.Delay(TimeSpan.FromMinutes(30));
+                }
+            });
+        }
+
+        private void AccountInfoUpdate(BinanceStreamAccountInfo accountInfo)
+        {
+
+        }
+
+        private void OrderUpdate(BinanceStreamOrderUpdate orderUpdate)
+        {
+
+        }
+
+        private void OrderListUpdate(BinanceStreamOrderList orderListUpdate)
+        {
+
+        }
+
+        private void PositionsUpdate(BinanceStreamPositionsUpdate positionsUpdate)
+        {
+
+        }
+
+        private void BalanceUpdate(BinanceStreamBalanceUpdate balanceUpdate)
+        {
+
+        }
 
         #endregion
 
@@ -93,38 +203,9 @@ namespace Snusnu.Services.SessionObjects
             return true;
         }
 
-        public async void Start()
+        private async Task Refresh()
         {
-            if (!IsCredentialsReady) return;
-            client = new BinanceClient(new BinanceClientOptions
-            {
-                ApiCredentials = new ApiCredentials(ApiKey, ApiSecret)
-            });
 
-            var startResult = await client.Spot.UserStream.StartUserStreamAsync();
-
-            if (!startResult.Success)
-                throw new Exception($"Failed to start user stream: {startResult.Error}");
-
-            var socketClient = new BinanceSocketClient();
-
-            var s = socketClient.Spot.SubscribeToUserDataUpdates(startResult.Data,
-                accountUpdate =>
-                { // Handle account info update 
-
-                }, orderUpdate =>
-                { // Handle order update
-
-                }, ocoUpdate =>
-                { // Handle oco order update
-
-                }, positionUpdate =>
-                { // Handle account position update
-
-                }, balanceUpdate =>
-                { // Handle balance update
-
-                });
         }
 
         #endregion

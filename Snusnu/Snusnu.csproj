@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Binance.Net" Version="6.8.2" />
+    <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     <PackageReference Include="Syncfusion.Licensing" Version="18.4.0.39" />
     <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="18.4.0.39" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="18.4.0.39" />
@@ -58,7 +59,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ViewModels\Windows\" />
+    <Compile Update="Views\Windows\APIInputWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\Windows\ProfileStarterWindow - Copy - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ProfileStarterWindow - Copy.xaml.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Views\Windows\ProfileStarterWindow - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>ProfileStarterWindow.xaml.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\Windows\APIInputWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

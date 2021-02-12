@@ -1,0 +1,52 @@
+﻿<syncfusion:ChromelessWindow x:Class="Snusnu.Views.Windows.ProfileStarterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snusnu.Views.Windows"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:syncfusionskin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        syncfusionskin:SfSkinManager.Theme="{syncfusionskin:SkinManagerExtension ThemeName=MaterialLight}"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Welcome to snusnu" Icon="/App.ico" Width="450" SizeToContent="Height" ResizeMode="NoResize">
+    <Grid Margin="16,16,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <syncfusion:SfTextInputLayout Grid.Row="1"
+                                      x:Name="AbsolutePathInputLayout"
+                                      Hint="Snu file">
+            <TextBox x:Name="AbsolutePath"
+                     TextChanged="AbsolutePath_TextChanged"/>
+        </syncfusion:SfTextInputLayout>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    Width="60"
+                    Height="30"
+                    Margin="2,8,8,8"
+                    Content="Create"
+                    Click="Button_Click_Create"/>
+            <Button Grid.Column="2"
+                    Width="60"
+                    Height="30"
+                    Margin="8,8,8,8"
+                    Content="Browse"
+                    Click="Button_Click_Browse"/>
+            <Button Grid.Column="3"
+                    Width="60"
+                    Height="30"
+                    Margin="8,8,2,8"
+                    Content="Open"
+                    Click="Button_Click_Open"/>
+        </Grid>
+    </Grid>
+</syncfusion:ChromelessWindow>

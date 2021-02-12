@@ -1,0 +1,56 @@
+﻿<syncfusion:ChromelessWindow x:Class="Snusnu.Views.Windows.DashboardWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Snusnu.Views.Windows"
+        xmlns:converters="clr-namespace:Snusnu.Converters"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Snusnu" Height="600" Width="900" Icon="/App.ico">
+
+    <syncfusion:ChromelessWindow.Resources>
+        <converters:SignColorConverter x:Key="signColorConverter" />
+    </syncfusion:ChromelessWindow.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <syncfusion:SfDataGrid
+            Margin="5"
+            AllowEditing="False"
+            AllowGrouping="True"
+            AutoGenerateColumns="False"
+            ColumnSizer="Star"
+            EnableDataVirtualization="True"
+            ItemsSource="{Binding Wallets}"
+            NavigationMode="Row"
+            ShowBusyIndicator="True">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn HeaderText="Name" MappingName="StrName" />
+                <syncfusion:GridTextColumn HeaderText="Balance" MappingName="StrBalance" />
+                <syncfusion:GridTextColumn HeaderText="Balance Value" MappingName="StrBalanceValue" />
+                <syncfusion:GridTextColumn HeaderText="Price" MappingName="StrPrice" />
+                <syncfusion:GridTemplateColumn HeaderText="Price Changes" MappingName="StrPriceChanges">
+                    <syncfusion:GridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                Padding="3"
+                                Foreground="{Binding PriceChanges, Converter={StaticResource signColorConverter}}"
+                                Text="{Binding StrPriceChanges}" />
+                        </DataTemplate>
+                    </syncfusion:GridTemplateColumn.CellTemplate>
+                </syncfusion:GridTemplateColumn>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+    </Grid>
+</syncfusion:ChromelessWindow>

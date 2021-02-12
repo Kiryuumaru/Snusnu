@@ -1,10 +1,12 @@
-﻿using Syncfusion.SfSkinManager;
+﻿using Snusnu.Models;
+using Syncfusion.SfSkinManager;
 using Syncfusion.Themes.MaterialDark.WPF;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Snusnu.Services.SessionObjects
 {
@@ -31,7 +33,7 @@ namespace Snusnu.Services.SessionObjects
             {
                 "MaterialLight" => MaterialLight,
                 "MaterialDark" => MaterialDark,
-                _ => MaterialLight
+                _ => Defaults.DefaultTheme
             };
         }
     }
@@ -39,6 +41,7 @@ namespace Snusnu.Services.SessionObjects
     public class Appearance
     {
         private Session session;
+        private readonly List<DependencyObject> dependencyObjects = new List<DependencyObject>();
 
         private Theme? theme;
         public Theme Theme
@@ -55,11 +58,16 @@ namespace Snusnu.Services.SessionObjects
             set
             {
                 theme = value;
-                SfSkinManager.SetTheme(session.DependencyObject, new Syncfusion.SfSkinManager.Theme(value.Code));
+                foreach (var obj in new List<DependencyObject>(dependencyObjects))
+                {
+                    if (obj.Dispatcher != null) SfSkinManager.SetTheme(obj, new Syncfusion.SfSkinManager.Theme(value.Code));
+                    else dependencyObjects.Remove(obj);
+                }
                 Task.Run(delegate
                 {
-                    session.Datastore.SetValue("theme", value.Code.ToString());
+                    session.Datastore.SetValue("theme", value.Code);
                 });
+                session.Logger.AddLog(new Log(DateTime.Now, "Appearance", "Changed to " + value.Code, LogType.Info));
             }
         }
 
@@ -75,6 +83,12 @@ namespace Snusnu.Services.SessionObjects
                 appearance.Theme = appearance.Theme;
                 return appearance;
             });
+        }
+
+        public void RegisterDependency(DependencyObject obj)
+        {
+            dependencyObjects.Add(obj);
+            SfSkinManager.SetTheme(obj, new Syncfusion.SfSkinManager.Theme(Theme.Code));
         }
     }
 }

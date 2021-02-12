@@ -1,4 +1,7 @@
-﻿using Snusnu.Services.SessionObjects;
+﻿using Snusnu.Models;
+using Snusnu.Services.SessionObjects;
+using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,8 +13,8 @@ namespace Snusnu.Services
         #region Properties
 
         public string AbsolutePath { get; private set; }
-        public DependencyObject DependencyObject { get; private set; }
         public Datastore Datastore { get; private set; }
+        public Logger Logger { get; private set; }
         public Appearance Appearance { get; private set; }
         public BinanceWrapper BinanceWrapper { get; private set; }
 
@@ -20,7 +23,7 @@ namespace Snusnu.Services
         #region Initializers
 
         private Session() { }
-        public static async Task<Session> Start(DependencyObject dependencyObject, string absolutePath)
+        public static async Task<Session> Start(string absolutePath)
         {
             try
             {
@@ -33,12 +36,13 @@ namespace Snusnu.Services
             }
             var session = new Session()
             {
-                DependencyObject = dependencyObject,
                 AbsolutePath = absolutePath
             };
             session.Datastore = await Datastore.Initialize(session);
+            session.Logger = await Logger.Initialize(session);
             session.Appearance = await Appearance.Initialize(session);
             session.BinanceWrapper = await BinanceWrapper.Initialize(session);
+            session.Logger.AddLog(new Log(DateTime.Now, "General", "Initializing . . .", LogType.Info));
             return session;
         }
 

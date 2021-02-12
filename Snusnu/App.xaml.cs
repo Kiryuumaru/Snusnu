@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syncfusion.SfSkinManager;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -16,6 +17,7 @@ namespace Snusnu
         public App()
         {
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mzk2ODI0QDMxMzgyZTM0MmUzMEMvQWpQK05DdjFVb0lsSDhqTWtjMUNra3B1c3hJNFhqVzljTGxYVDE1djA9");
+            SfSkinManager.ApplyStylesOnApplication = true;
         }
     }
 }
