@@ -16,28 +16,28 @@ namespace Snusnu.Models
     {
         #region UIElements
 
-        public string strDateTime;
+        private string strDateTime;
         public string StrDateTime
         {
             get => strDateTime;
             set => SetProperty(ref strDateTime, value);
         }
 
-        public string strCategory;
+        private string strCategory;
         public string StrCategory
         {
             get => strCategory;
             set => SetProperty(ref strCategory, value);
         }
 
-        public string strMessage;
+        private string strMessage;
         public string StrMessage
         {
             get => strMessage;
             set => SetProperty(ref strMessage, value);
         }
 
-        public string strLogType;
+        private string strLogType;
         public string StrLogType
         {
             get => strLogType;

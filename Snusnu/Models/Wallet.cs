@@ -1,4 +1,5 @@
-﻿using MvvmHelpers;
+﻿using Binance.Net.Objects.Spot.WalletData;
+using MvvmHelpers;
 using Snusnu.Services;
 using System;
 using System.Collections.Generic;
@@ -12,35 +13,42 @@ namespace Snusnu.Models
     {
         #region UIElements
 
-        public string strName;
+        private string strName;
         public string StrName
         {
             get => strName;
             set => SetProperty(ref strName, value);
         }
 
-        public string strBalance;
+        private string strCode;
+        public string StrCode
+        {
+            get => strCode;
+            set => SetProperty(ref strCode, value);
+        }
+
+        private string strBalance;
         public string StrBalance
         {
             get => strBalance;
             set => SetProperty(ref strBalance, value);
         }
 
-        public string strBalanceValue;
+        private string strBalanceValue;
         public string StrBalanceValue
         {
             get => strBalanceValue;
             set => SetProperty(ref strBalanceValue, value);
         }
 
-        public string strPrice;
+        private string strPrice;
         public string StrPrice
         {
             get => strPrice;
             set => SetProperty(ref strPrice, value);
         }
 
-        public string strPriceChanges;
+        private string strPriceChanges;
         public string StrPriceChanges
         {
             get => strPriceChanges;
@@ -52,18 +60,35 @@ namespace Snusnu.Models
         #region Properties
 
         public Session Session { get; private set; }
-        public string Name { get; private set; }
-        public string Currency { get; private set; }
-        public decimal Balance { get; private set; }
-        public decimal Price { get; private set; }
-        public double PriceChanges { get; private set; }
-        public List<Market> Markets { get; internal set; } = new List<Market>();
-        public DateTime LastUpdated { get; internal set; }
+        public string Name { get; set; }
+        public string Code { get; set; }
+        public decimal Balance { get; set; }
+        public DateTime BalanceLastUpdated { get; set; } = DateTime.UtcNow;
+        public decimal Price { get; set; }
+        public double PriceChanges { get; set; }
+        public List<Market> Markets { get; set; } = new List<Market>();
 
         #endregion
 
         #region Initializers
 
+        private Wallet() { }
+        public static Wallet FromPrimitive(BinanceUserCoin coin)
+        {
+            return new Wallet()
+            {
+                Name = coin.Name,
+                Code = coin.Coin,
+                Balance = coin.Free
+            };
+        }
+
+        public void Update(Wallet wallet)
+        {
+            Name = wallet.Name;
+            Code = wallet.Code;
+            Balance = wallet.Balance;
+        }
 
         #endregion
 
@@ -71,7 +96,8 @@ namespace Snusnu.Models
 
         public void NotifyUpdate()
         {
-            StrName = Currency.ToUpper() + " " + Name;
+            StrName = Name;
+            StrCode = Code.ToUpper();
             StrBalance = Balance.ToString("0.00000000");
             StrBalanceValue = Balance.ToString("0.00000000");
         }

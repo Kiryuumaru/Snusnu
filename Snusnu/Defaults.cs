@@ -13,7 +13,7 @@ namespace Snusnu
 
         public static readonly Theme DefaultTheme = Theme.MaterialLight;
         public static readonly string GeneralCurrency = "USD";
-        public static readonly TimeSpan RefreshSpan = TimeSpan.FromMinutes(1);
+        public static readonly TimeSpan RefreshSpan = TimeSpan.FromMinutes(5);
         public static readonly TimeSpan RetrySpan = TimeSpan.FromSeconds(2);
 
     }

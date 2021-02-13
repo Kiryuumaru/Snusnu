@@ -15,9 +15,9 @@ namespace Snusnu.Converters
         {
             if (value == null)
                 return null;
-            if ((decimal)value > 0)
+            if ((double)value > 0)
                 return new SolidColorBrush(Colors.Green);
-            else if ((decimal)value < 0)
+            else if ((double)value < 0)
                 return new SolidColorBrush(Colors.Red);
             return new SolidColorBrush(Colors.Black);
         }

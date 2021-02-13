@@ -15,6 +15,7 @@ namespace Snusnu.ViewModels.Windows
         private Session session;
 
         public ObservableCollection<Wallet> Wallets => session.BinanceWrapper.Wallets;
+        public ObservableCollection<Market> Markets => session.BinanceWrapper.Markets;
 
         public DashboardWindowViewModel(Session session)
         {

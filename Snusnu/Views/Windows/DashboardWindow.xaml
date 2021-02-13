@@ -18,14 +18,16 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+
         <syncfusion:SfDataGrid
+            Grid.Row="2"
+            Grid.Column="0"
             Margin="5"
             AllowEditing="False"
             AllowGrouping="True"
@@ -37,6 +39,7 @@
             ShowBusyIndicator="True">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridTextColumn HeaderText="Name" MappingName="StrName" />
+                <syncfusion:GridTextColumn HeaderText="Code" MappingName="StrCode" />
                 <syncfusion:GridTextColumn HeaderText="Balance" MappingName="StrBalance" />
                 <syncfusion:GridTextColumn HeaderText="Balance Value" MappingName="StrBalanceValue" />
                 <syncfusion:GridTextColumn HeaderText="Price" MappingName="StrPrice" />
@@ -50,6 +53,23 @@
                         </DataTemplate>
                     </syncfusion:GridTemplateColumn.CellTemplate>
                 </syncfusion:GridTemplateColumn>
+            </syncfusion:SfDataGrid.Columns>
+        </syncfusion:SfDataGrid>
+        <syncfusion:SfDataGrid
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="5"
+            AllowEditing="False"
+            AllowGrouping="True"
+            AutoGenerateColumns="False"
+            ColumnSizer="Star"
+            EnableDataVirtualization="True"
+            ItemsSource="{Binding Markets}"
+            NavigationMode="Row"
+            ShowBusyIndicator="True">
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn HeaderText="Symbol" MappingName="StrSymbol" />
+                <syncfusion:GridTextColumn HeaderText="Price" MappingName="StrPrice" />
             </syncfusion:SfDataGrid.Columns>
         </syncfusion:SfDataGrid>
     </Grid>

@@ -1,4 +1,6 @@
-﻿using MvvmHelpers;
+﻿using Binance.Net.Interfaces;
+using Binance.Net.Objects.Spot.MarketData;
+using MvvmHelpers;
 using Snusnu.Services;
 using System;
 using System.Collections.Generic;
@@ -12,56 +14,63 @@ namespace Snusnu.Models
     {
         #region UIElements
 
-        public string strName;
-        public string StrName
+        private string strSymbol;
+        public string StrSymbol
         {
-            get => strName;
-            set => SetProperty(ref strName, value);
+            get => strSymbol;
+            set => SetProperty(ref strSymbol, value);
         }
 
-        public string strBalance;
-        public string StrBalance
-        {
-            get => strBalance;
-            set => SetProperty(ref strBalance, value);
-        }
-
-        public string strBalanceValue;
-        public string StrBalanceValue
-        {
-            get => strBalanceValue;
-            set => SetProperty(ref strBalanceValue, value);
-        }
-
-        public string strPrice;
+        private string strPrice;
         public string StrPrice
         {
             get => strPrice;
             set => SetProperty(ref strPrice, value);
         }
 
-        public string strPriceChanges;
-        public string StrPriceChanges
-        {
-            get => strPriceChanges;
-            set => SetProperty(ref strPriceChanges, value);
-        }
-
         #endregion
 
         #region Properties
 
+        private string baseWalletCode;
+        private string quoteWalletCode;
+
         public Session Session { get; private set; }
-        public string Symbol { get; private set; }
-        public decimal Price { get; private set; }
-        public Wallet BaseWallet { get; private set; }
-        public Wallet QuoteWallet { get; private set; }
-        public DateTime LastUpdated { get; internal set; }
+        public string Symbol { get; set; }
+        public decimal BuyMin { get; set; }
+        public decimal SellMin { get; set; }
+        public decimal StepSize { get; set; }
+        public IBinanceTick Tick { get; set; }
+        public DateTime TickLastUpdated { get; set; } = DateTime.UtcNow;
+
+        public Wallet BaseWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(baseWalletCode));
+        public Wallet QuoteWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(quoteWalletCode));
 
         #endregion
 
         #region Initializers
 
+        private Market() { }
+        public static Market FromPrimitive(BinanceSymbol symbol)
+        {
+            return new Market()
+            {
+                baseWalletCode = symbol.BaseAsset,
+                quoteWalletCode = symbol.QuoteAsset,
+                Symbol = symbol.Name,
+                BuyMin = symbol.MinNotionalFilter.MinNotional,
+                SellMin = symbol.LotSizeFilter.MinQuantity,
+                StepSize = symbol.LotSizeFilter.StepSize,
+            };
+        }
+
+        public void Update(Market market)
+        {
+            Symbol = market.Symbol;
+            BuyMin = market.BuyMin;
+            SellMin = market.SellMin;
+            StepSize = market.StepSize;
+        }
 
         #endregion
 
@@ -69,7 +78,8 @@ namespace Snusnu.Models
 
         public void NotifyUpdate()
         {
-
+            StrSymbol = Symbol;
+            StrPrice = Tick?.LastPrice.ToString("0.00000000");
         }
 
         #endregion
