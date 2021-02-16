@@ -16,6 +16,7 @@
     <PackageReference Include="Binance.Net" Version="6.8.2" />
     <PackageReference Include="Refractored.MvvmHelpers" Version="1.6.2" />
     <PackageReference Include="Syncfusion.Licensing" Version="18.4.0.39" />
+    <PackageReference Include="Syncfusion.SfNavigationDrawer.WPF" Version="18.4.0.39" />
     <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="18.4.0.39" />
     <PackageReference Include="Syncfusion.Shared.WPF" Version="18.4.0.39" />
     <PackageReference Include="Syncfusion.SfScheduler.WPF" Version="18.4.0.39" />

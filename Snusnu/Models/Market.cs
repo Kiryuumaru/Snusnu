@@ -1,4 +1,5 @@
-﻿using Binance.Net.Interfaces;
+﻿using Binance.Net.Enums;
+using Binance.Net.Interfaces;
 using Binance.Net.Objects.Spot.MarketData;
 using MvvmHelpers;
 using Snusnu.Services;
@@ -32,45 +33,28 @@ namespace Snusnu.Models
 
         #region Properties
 
-        private string baseWalletCode;
-        private string quoteWalletCode;
-
-        public Session Session { get; private set; }
+        public Session Session { get; set; }
         public string Symbol { get; set; }
-        public decimal BuyMin { get; set; }
-        public decimal SellMin { get; set; }
-        public decimal StepSize { get; set; }
-        public IBinanceTick Tick { get; set; }
-        public DateTime TickLastUpdated { get; set; } = DateTime.UtcNow;
+        public decimal MinTradeAmount { get; set; }
+        public decimal MinPriceMovement { get; set; }
+        public decimal MinOrderSize { get; set; }
+        public IEnumerable<OrderType> OrderTypes { get; set; }
+        public decimal TakerFeePercentage { get; set; }
+        public decimal MakerFeePercentage { get; set; }
 
-        public Wallet BaseWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(baseWalletCode));
-        public Wallet QuoteWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(quoteWalletCode));
+        public string BaseWalletCode { get; set; }
+        public string QuoteWalletCode { get; set; }
+        public Wallet BaseWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(BaseWalletCode));
+        public Wallet QuoteWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(QuoteWalletCode));
+
+        public decimal Price { get; set; }
+        public DateTime PriceLastUpdated { get; set; }
 
         #endregion
 
         #region Initializers
 
-        private Market() { }
-        public static Market FromPrimitive(BinanceSymbol symbol)
-        {
-            return new Market()
-            {
-                baseWalletCode = symbol.BaseAsset,
-                quoteWalletCode = symbol.QuoteAsset,
-                Symbol = symbol.Name,
-                BuyMin = symbol.MinNotionalFilter.MinNotional,
-                SellMin = symbol.LotSizeFilter.MinQuantity,
-                StepSize = symbol.LotSizeFilter.StepSize,
-            };
-        }
-
-        public void Update(Market market)
-        {
-            Symbol = market.Symbol;
-            BuyMin = market.BuyMin;
-            SellMin = market.SellMin;
-            StepSize = market.StepSize;
-        }
+        public Market() { }
 
         #endregion
 
@@ -79,7 +63,7 @@ namespace Snusnu.Models
         public void NotifyUpdate()
         {
             StrSymbol = Symbol;
-            StrPrice = Tick?.LastPrice.ToString("0.00000000");
+            StrPrice = Price.ToString();
         }
 
         #endregion

@@ -18,6 +18,8 @@ namespace Snusnu.Services
         public Appearance Appearance { get; private set; }
         public BinanceWrapper BinanceWrapper { get; private set; }
 
+        public string FileName => Path.GetFileNameWithoutExtension(AbsolutePath);
+
         #endregion
 
         #region Initializers

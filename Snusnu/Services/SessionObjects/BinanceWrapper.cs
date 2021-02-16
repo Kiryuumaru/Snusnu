@@ -1,10 +1,12 @@
 ﻿using Binance.Net;
+using Binance.Net.Enums;
 using Binance.Net.Interfaces;
 using Binance.Net.Objects.Spot;
 using Binance.Net.Objects.Spot.MarketData;
 using Binance.Net.Objects.Spot.UserStream;
 using Binance.Net.Objects.Spot.WalletData;
 using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Interfaces;
 using CryptoExchange.Net.Objects;
 using Snusnu.Models;
 using System;
@@ -66,31 +68,6 @@ namespace Snusnu.Services.SessionObjects
             await InitializeInstances();
             await InitializeInfos();
             await InitializeStreamers();
-            while (true)
-            {
-
-                var socketStream = socket.Spot.SubscribeToUserDataUpdates(listenKey, AccountInfoUpdate, OrderUpdate, OrderListUpdate, PositionsUpdate, BalanceUpdate);
-                if (!socketStream.Success)
-                {
-                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "User update stream subscribe failed", LogType.Error));
-                    await Task.Delay(Defaults.RetrySpan);
-                    continue;
-                }
-                var tickerStream = socket.Spot.SubscribeToAllSymbolTickerUpdates(SymbolTickerUpdates);
-                if (!tickerStream.Success)
-                {
-                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Ticker update stream subscribe failed", LogType.Error));
-                    await Task.Delay(Defaults.RetrySpan);
-                    continue;
-                }
-                tickerStream.Data.ConnectionLost += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection lost", LogType.Info)); };
-                tickerStream.Data.ConnectionRestored += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection restored", LogType.Info)); };
-                tickerStream.Data.ActivityPaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity paused", LogType.Info)); };
-                tickerStream.Data.ActivityUnpaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity unpaused", LogType.Info)); };
-                session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Ready", LogType.Info));
-                StartRegularRefresher();
-                break;
-            }
         }
 
         private async Task InitializeInstances()
@@ -150,52 +127,92 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
+                var dayHistPrices = await client.Spot.Market.Get24HPricesAsync();
+                if (!dayHistPrices.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch 24h prices failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                var prices = await client.Spot.Market.GetAllPricesAsync();
+                if (!prices.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch latest prices failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                var tradeFees = await client.Spot.Market.GetTradeFeeAsync();
+                if (!tradeFees.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch trade fees failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
+                //var tradeFees = await client.Spot.Order.
+                //if (!tradeFees.Success)
+                //{
+                //    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch trade fees failed", LogType.Error));
+                //    await Task.Delay(Defaults.RetrySpan);
+                //    continue;
+                //}
 
                 #endregion
 
-                var derivedWallets = wallets.Data.Select(i => Wallet.FromPrimitive(i)).Where(i => i != null);
-                var derivedMarkets = systemInfo.Data.Symbols.Select(i => Market.FromPrimitive(i)).Where(i => i != null);
+                #region DerivePrimitive
 
-                #region PushToNotifier
-
-                foreach (var wallet in derivedWallets)
+                foreach (var coin in wallets.Data)
                 {
-                    var existing = Wallets.FirstOrDefault(i => i.Code.Equals(wallet.Code));
+                    var existing = Wallets.FirstOrDefault(i => i.Code.Equals(coin.Coin));
                     if (existing == null)
                     {
-                        existing = wallet;
+                        existing = new Wallet();
                         Wallets.Add(existing);
                     }
-                    else
-                    {
-                        existing.Update(wallet);
-                    }
+                    existing.Session = session;
+                    existing.Name = coin.Name;
+                    existing.Code = coin.Coin;
+                    existing.Balance = coin.Free;
+                    existing.BalanceLastUpdated = DateTime.UtcNow;
                     existing.NotifyUpdate();
                 }
                 foreach (var wallet in new List<Wallet>(Wallets))
                 {
-                    if (!derivedWallets.Any(i => i.Code.Equals(wallet.Code)))
+                    if (!wallets.Data.Any(i => i.Coin.Equals(wallet.Code)))
                     {
                         Wallets.Remove(wallet);
                     }
                 }
-                foreach (var market in derivedMarkets)
+
+                foreach (var symbol in systemInfo.Data.Symbols)
                 {
-                    var existing = Markets.FirstOrDefault(i => i.Symbol.Equals(market.Symbol));
+                    if (!symbol.OrderTypes.Any(i => i == OrderType.Limit || i == OrderType.Market)) continue;
+                    var price = prices.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
+                    if (price == null) continue;
+                    var tradeFee = tradeFees.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
+                    if (tradeFee == null) continue;
+                    var existing = Markets.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
                     if (existing == null)
                     {
-                        existing = market;
+                        existing = new Market();
                         Markets.Add(existing);
                     }
-                    else
-                    {
-                        existing.Update(market);
-                    }
+                    existing.Session = session;
+                    existing.Symbol = symbol.Name;
+                    existing.MinTradeAmount = symbol.LotSizeFilter.MinQuantity;
+                    existing.MinPriceMovement = symbol.PriceFilter.MinPrice;
+                    existing.MinOrderSize = symbol.MinNotionalFilter.MinNotional;
+                    existing.OrderTypes = symbol.OrderTypes;
+                    existing.TakerFeePercentage = tradeFee.TakerFee * 100;
+                    existing.MakerFeePercentage = tradeFee.MakerFee * 100;
+                    existing.Price = price.Price;
+                    existing.PriceLastUpdated = price.Timestamp ?? DateTime.UtcNow;
+                    existing.BaseWalletCode = symbol.BaseAsset;
+                    existing.QuoteWalletCode = symbol.QuoteAsset;
                     existing.NotifyUpdate();
                 }
                 foreach (var market in new List<Market>(Markets))
                 {
-                    if (!derivedMarkets.Any(i => i.Symbol.Equals(market.Symbol)))
+                    if (!systemInfo.Data.Symbols.Any(i => i.Name.Equals(market.Symbol)))
                     {
                         Markets.Remove(market);
                     }
@@ -211,6 +228,13 @@ namespace Snusnu.Services.SessionObjects
         {
             while (true)
             {
+                var socketStream = socket.Spot.SubscribeToUserDataUpdates(listenKey, AccountInfoUpdate, OrderUpdate, OrderListUpdate, PositionsUpdate, BalanceUpdate);
+                if (!socketStream.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "User update stream subscribe failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
                 var tickerStream = await socket.Spot.SubscribeToAllSymbolTickerUpdatesAsync(SymbolTickerUpdates);
                 if (!tickerStream.Success)
                 {
@@ -218,13 +242,14 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
+                tickerStream.Data.ConnectionLost += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection lost", LogType.Info)); };
+                tickerStream.Data.ConnectionRestored += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection restored", LogType.Info)); };
+                tickerStream.Data.ActivityPaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity paused", LogType.Info)); };
+                tickerStream.Data.ActivityUnpaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity unpaused", LogType.Info)); };
+                session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Ready", LogType.Info));
+                StartRegularRefresher();
+                break;
             }
-        }
-
-        public void Stop()
-        {
-            client.Spot.UserStream.StopUserStream(listenKey);
-            session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Stream key stopped", LogType.Info));
         }
 
         #endregion
@@ -237,7 +262,7 @@ namespace Snusnu.Services.SessionObjects
             {
                 while (true)
                 {
-
+                    await InitializeInfos();
                     await Task.Delay(Defaults.RefreshSpan);
                 }
             });
@@ -262,8 +287,8 @@ namespace Snusnu.Services.SessionObjects
                 var market = Markets.FirstOrDefault(i => i.Symbol.Equals(tick.Symbol));
                 if (market != null)
                 {
-                    market.Tick = tick;
-                    market.TickLastUpdated = DateTime.UtcNow;
+                    market.Price = tick.LastPrice;
+                    market.PriceLastUpdated = DateTime.UtcNow;
                     market.NotifyUpdate();
                 }
             }

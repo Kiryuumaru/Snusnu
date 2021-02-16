@@ -1,7 +1,8 @@
 {
   "profiles": {
     "Snusnu": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Desktop\\asd\\MainProfile.snu"
     }
   }
 }

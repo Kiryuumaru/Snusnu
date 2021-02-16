@@ -59,7 +59,7 @@ namespace Snusnu.Models
 
         #region Properties
 
-        public Session Session { get; private set; }
+        public Session Session { get; set; }
         public string Name { get; set; }
         public string Code { get; set; }
         public decimal Balance { get; set; }
@@ -72,23 +72,7 @@ namespace Snusnu.Models
 
         #region Initializers
 
-        private Wallet() { }
-        public static Wallet FromPrimitive(BinanceUserCoin coin)
-        {
-            return new Wallet()
-            {
-                Name = coin.Name,
-                Code = coin.Coin,
-                Balance = coin.Free
-            };
-        }
-
-        public void Update(Wallet wallet)
-        {
-            Name = wallet.Name;
-            Code = wallet.Code;
-            Balance = wallet.Balance;
-        }
+        public Wallet() { }
 
         #endregion
 
@@ -98,8 +82,8 @@ namespace Snusnu.Models
         {
             StrName = Name;
             StrCode = Code.ToUpper();
-            StrBalance = Balance.ToString("0.00000000");
-            StrBalanceValue = Balance.ToString("0.00000000");
+            StrBalance = Balance.ToString();
+            StrBalanceValue = Balance.ToString();
         }
 
         #endregion
