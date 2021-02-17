@@ -19,20 +19,25 @@ using System.Windows.Media.Imaging;
 namespace Snusnu.Views.Windows
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainWIndow.xaml
     /// </summary>
-    public partial class DashboardWindow : ChromelessWindow
+    public partial class MainWindow : ChromelessWindow
     {
         private readonly Session session;
-        private readonly DashboardWindowViewModel viewModel;
+        private readonly MainWindowViewModel viewModel;
 
-        public DashboardWindow(Session session)
+        public MainWindow(Session session)
         {
             InitializeComponent();
             this.session = session;
             this.session.Appearance.RegisterDependency(this);
-            viewModel = new DashboardWindowViewModel(session);
+            viewModel = new MainWindowViewModel(session);
             DataContext = viewModel;
+        }
+
+        private void NavigationDrawer_ItemClicked(object sender, Syncfusion.UI.Xaml.NavigationDrawer.NavigationItemClickedEventArgs e)
+        {
+
         }
     }
 }

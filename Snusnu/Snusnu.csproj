@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="App.ico" />
+    <None Remove="Views\Windows\MainWindow.xaml~RFc1242ef.TMP" />
   </ItemGroup>
 
   <ItemGroup>

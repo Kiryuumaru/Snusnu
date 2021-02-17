@@ -10,15 +10,15 @@ using System.Threading.Tasks;
 
 namespace Snusnu.ViewModels.Windows
 {
-    public class DashboardWindowViewModel : BaseViewModel
+    public class MainWindowViewModel : BaseViewModel
     {
         private Session session;
 
-        public string HeaderName => session.FileName;
+        public string NavigationHeaderText => session.FileName;
         public ObservableCollection<Wallet> Wallets => session.BinanceWrapper.Wallets;
         public ObservableCollection<Market> Markets => session.BinanceWrapper.Markets;
 
-        public DashboardWindowViewModel(Session session)
+        public MainWindowViewModel(Session session)
         {
             this.session = session;
         }

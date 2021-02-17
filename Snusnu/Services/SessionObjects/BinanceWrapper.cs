@@ -27,6 +27,8 @@ namespace Snusnu.Services.SessionObjects
         private BinanceClient client;
         private BinanceSocketClient socket;
         private string listenKey;
+        private bool isLazyInitialized = false;
+        private event Action OnLazyInitialized;
 
         private string ApiKey
         {
@@ -68,6 +70,8 @@ namespace Snusnu.Services.SessionObjects
             await InitializeInstances();
             await InitializeInfos();
             await InitializeStreamers();
+            isLazyInitialized = true;
+            OnLazyInitialized?.Invoke();
         }
 
         private async Task InitializeInstances()
@@ -353,6 +357,12 @@ namespace Snusnu.Services.SessionObjects
             ApiKey = apiKey;
             ApiSecret = apiSecret;
             return true;
+        }
+
+        public void SetOnLazyInitialized(Action action)
+        {
+            if (isLazyInitialized) action?.Invoke();
+            OnLazyInitialized = action;
         }
 
         private async Task Refresh()
