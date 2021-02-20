@@ -18,8 +18,7 @@
         <syncfusion:SfNavigationDrawer
             x:Name="navigationDrawer"
             ItemClicked="NavigationDrawer_ItemClicked"
-            DisplayMode="Compact"
-            ItemsSource="{Binding}">
+            DisplayMode="Compact">
             <syncfusion:SfNavigationDrawer.ToggleButtonContentTemplate>
                 <DataTemplate>
                     <Label
