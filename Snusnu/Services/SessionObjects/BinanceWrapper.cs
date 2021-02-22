@@ -12,6 +12,7 @@ using Snusnu.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -23,12 +24,15 @@ namespace Snusnu.Services.SessionObjects
     {
         #region Properties
 
+        private readonly Stopwatch infosInitializeTime = new Stopwatch();
+
         private Session session;
         private BinanceClient client;
         private BinanceSocketClient socket;
         private string listenKey;
         private bool isLazyInitialized = false;
         private event Action OnLazyInitialized;
+        private DateTime serverDateTimeStarted;
 
         private string ApiKey
         {
@@ -45,6 +49,7 @@ namespace Snusnu.Services.SessionObjects
         public readonly ObservableCollection<Wallet> Wallets = new ObservableCollection<Wallet>();
         public readonly ObservableCollection<Market> Markets = new ObservableCollection<Market>();
 
+        public DateTime ServerTime => serverDateTimeStarted + infosInitializeTime.Elapsed;
         public bool IsCredentialsReady => !string.IsNullOrEmpty(ApiKey) && !string.IsNullOrEmpty(ApiSecret);
         public bool IsStarted => client != null;
 
@@ -108,6 +113,8 @@ namespace Snusnu.Services.SessionObjects
         {
             while (true)
             {
+                infosInitializeTime.Restart();
+
                 #region Fetch
 
                 var systemInfo = await client.Spot.System.GetExchangeInfoAsync();
@@ -131,20 +138,6 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
-                var dayHistPrices = await client.Spot.Market.Get24HPricesAsync();
-                if (!dayHistPrices.Success)
-                {
-                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch 24h prices failed", LogType.Error));
-                    await Task.Delay(Defaults.RetrySpan);
-                    continue;
-                }
-                var prices = await client.Spot.Market.GetAllPricesAsync();
-                if (!prices.Success)
-                {
-                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch latest prices failed", LogType.Error));
-                    await Task.Delay(Defaults.RetrySpan);
-                    continue;
-                }
                 var tradeFees = await client.Spot.Market.GetTradeFeeAsync();
                 if (!tradeFees.Success)
                 {
@@ -152,17 +145,19 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
-                //var tradeFees = await client.Spot.Order.
-                //if (!tradeFees.Success)
-                //{
-                //    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch trade fees failed", LogType.Error));
-                //    await Task.Delay(Defaults.RetrySpan);
-                //    continue;
-                //}
+                var prices = await client.Spot.Market.GetAllPricesAsync();
+                if (!prices.Success)
+                {
+                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server system fetch prices failed", LogType.Error));
+                    await Task.Delay(Defaults.RetrySpan);
+                    continue;
+                }
 
                 #endregion
 
                 #region DerivePrimitive
+
+                serverDateTimeStarted = systemInfo.Data.ServerTime;
 
                 foreach (var coin in wallets.Data)
                 {
@@ -190,10 +185,10 @@ namespace Snusnu.Services.SessionObjects
                 foreach (var symbol in systemInfo.Data.Symbols)
                 {
                     if (!symbol.OrderTypes.Any(i => i == OrderType.Limit || i == OrderType.Market)) continue;
-                    var price = prices.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
-                    if (price == null) continue;
                     var tradeFee = tradeFees.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
                     if (tradeFee == null) continue;
+                    var price = prices.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
+                    if (price == null) continue;
                     var existing = Markets.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
                     if (existing == null)
                     {
@@ -208,10 +203,17 @@ namespace Snusnu.Services.SessionObjects
                     existing.OrderTypes = symbol.OrderTypes;
                     existing.TakerFeePercentage = tradeFee.TakerFee * 100;
                     existing.MakerFeePercentage = tradeFee.MakerFee * 100;
-                    existing.Price = price.Price;
-                    existing.PriceLastUpdated = price.Timestamp ?? DateTime.UtcNow;
                     existing.BaseWalletCode = symbol.BaseAsset;
                     existing.QuoteWalletCode = symbol.QuoteAsset;
+                    existing.Prices.Add(new Quote()
+                    {
+                        HighPrice = price.Price,
+                        LowPrice = price.Price,
+                        OpenPrice = price.Price,
+                        ClosePrice = price.Price,
+                        OpenTime = ServerTime,
+                        CloseTime = ServerTime,
+                    });
                     existing.NotifyUpdate();
                 }
                 foreach (var market in new List<Market>(Markets))
@@ -239,7 +241,7 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
-                var tickerStream = await socket.Spot.SubscribeToAllSymbolTickerUpdatesAsync(SymbolTickerUpdates);
+                var tickerStream = await socket.Spot.SubscribeToAllSymbolMiniTickerUpdatesAsync(SymbolMiniTickerUpdates);
                 if (!tickerStream.Success)
                 {
                     session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server market ticker subscribe failed", LogType.Error));
@@ -266,8 +268,8 @@ namespace Snusnu.Services.SessionObjects
             {
                 while (true)
                 {
-                    await InitializeInfos();
                     await Task.Delay(Defaults.RefreshSpan);
+                    await InitializeInfos();
                 }
             });
             Task.Run(async delegate
@@ -284,15 +286,33 @@ namespace Snusnu.Services.SessionObjects
 
         #region UserUpdater
 
-        private void SymbolTickerUpdates(IEnumerable<IBinanceTick> ticks)
+        private void SymbolMiniTickerUpdates(IEnumerable<IBinanceMiniTick> ticks)
         {
             foreach (var tick in ticks)
             {
                 var market = Markets.FirstOrDefault(i => i.Symbol.Equals(tick.Symbol));
                 if (market != null)
                 {
-                    market.Price = tick.LastPrice;
-                    market.PriceLastUpdated = DateTime.UtcNow;
+                    var lastQuote = market.Prices.Last();
+                    if (lastQuote.OpenTime + Defaults.CandleSpan < ServerTime)
+                    {
+                        market.Prices.Add(new Quote()
+                        {
+                            HighPrice = tick.LastPrice,
+                            LowPrice = tick.LastPrice,
+                            OpenPrice = tick.LastPrice,
+                            ClosePrice = tick.LastPrice,
+                            OpenTime = ServerTime,
+                            CloseTime = ServerTime,
+                        });
+                    }
+                    else
+                    {
+                        if (lastQuote.HighPrice < tick.LastPrice) lastQuote.HighPrice = tick.LastPrice;
+                        if (lastQuote.LowPrice > tick.LastPrice) lastQuote.LowPrice = tick.LastPrice;
+                        lastQuote.ClosePrice = tick.LastPrice;
+                        lastQuote.CloseTime = ServerTime;
+                    }
                     market.NotifyUpdate();
                 }
             }

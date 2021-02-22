@@ -1,4 +1,5 @@
-﻿using Snusnu.Services.SessionObjects;
+﻿using Binance.Net.Enums;
+using Snusnu.Services.SessionObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,8 @@ namespace Snusnu
         public const string FileExtension = "snu";
 
         public static readonly Theme DefaultTheme = Theme.MaterialLight;
-        public static readonly string GeneralCurrency = "USD";
         public static readonly TimeSpan RefreshSpan = TimeSpan.FromMinutes(5);
         public static readonly TimeSpan RetrySpan = TimeSpan.FromSeconds(2);
-
+        public static readonly TimeSpan CandleSpan = TimeSpan.FromMinutes(15);
     }
 }

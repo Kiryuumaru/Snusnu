@@ -17,7 +17,6 @@
     <Grid>
         <syncfusion:SfNavigationDrawer
             x:Name="navigationDrawer"
-            ItemClicked="NavigationDrawer_ItemClicked"
             DisplayMode="Compact">
             <syncfusion:SfNavigationDrawer.ToggleButtonContentTemplate>
                 <DataTemplate>
@@ -74,8 +73,8 @@
             </syncfusion:NavigationItem>
             <syncfusion:SfNavigationDrawer.FooterItems>
                 <syncfusion:NavigationItem
-                    x:Name="settings"
                     Header="Settings"
+                    MouseDown="Settings_MouseDown"
                     SelectionBackground="Transparent">
                     <syncfusion:NavigationItem.Icon>
                         <Path
@@ -91,18 +90,88 @@
             </syncfusion:SfNavigationDrawer.FooterItems>
             <syncfusion:SfNavigationDrawer.ContentView>
                 <Grid Background="#fafafa">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Label
-                        Grid.Row="0"
-                        Margin="20,10,10,0"
-                        HorizontalAlignment="Left"
-                        Content="{Binding Path=SelectedItem.Header, ElementName=navigationDrawer}"
-                        FontSize="14"
-                        FontWeight="Bold" />
-                    
+                    <Grid x:Name="dashboardGrid"
+                        Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label
+                            Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            Content="Dashboard"
+                            FontSize="14"
+                            FontWeight="Bold" />
+                    </Grid>
+                    <Grid x:Name="walletsGrid"
+                        Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label
+                            Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            Content="Wallets"
+                            FontSize="14"
+                            FontWeight="Bold" />
+                        <syncfusion:SfDataGrid
+                            Grid.Row="1"
+                            AllowEditing="False"
+                            AllowGrouping="True"
+                            AutoGenerateColumns="False"
+                            ColumnSizer="Star"
+                            EnableDataVirtualization="True"
+                            ItemsSource="{Binding Wallets}"
+                            NavigationMode="Row"
+                            ShowBusyIndicator="True">
+                            <syncfusion:SfDataGrid.Columns>
+                                <syncfusion:GridTextColumn HeaderText="Name" MappingName="StrName" />
+                                <syncfusion:GridTextColumn HeaderText="Code" MappingName="StrCode" />
+                                <syncfusion:GridTextColumn HeaderText="Balance" MappingName="StrBalance" />
+                                <syncfusion:GridTextColumn HeaderText="Balance Value" MappingName="StrBalanceValue" />
+                                <syncfusion:GridTextColumn HeaderText="Price" MappingName="StrPrice" />
+                                <syncfusion:GridTemplateColumn HeaderText="Price Changes" MappingName="StrPriceChanges">
+                                    <syncfusion:GridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Padding="3"
+                                                Foreground="{Binding PriceChanges, Converter={StaticResource signColorConverter}}"
+                                                Text="{Binding StrPriceChanges}" />
+                                        </DataTemplate>
+                                    </syncfusion:GridTemplateColumn.CellTemplate>
+                                </syncfusion:GridTemplateColumn>
+                            </syncfusion:SfDataGrid.Columns>
+                        </syncfusion:SfDataGrid>
+                    </Grid>
+                    <Grid x:Name="marketsGrid"
+                        Margin="10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Label
+                            Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            Content="Markets"
+                            FontSize="14"
+                            FontWeight="Bold" />
+                        <syncfusion:SfDataGrid
+                            Grid.Row="1"
+                            AllowEditing="False"
+                            AllowGrouping="True"
+                            AutoGenerateColumns="False"
+                            ColumnSizer="Star"
+                            EnableDataVirtualization="True"
+                            ItemsSource="{Binding Markets}"
+                            NavigationMode="Row"
+                            ShowBusyIndicator="True">
+                            <syncfusion:SfDataGrid.Columns>
+                                <syncfusion:GridTextColumn HeaderText="Symbol" MappingName="StrSymbol" />
+                                <syncfusion:GridTextColumn HeaderText="Price" MappingName="StrPrice" />
+                            </syncfusion:SfDataGrid.Columns>
+                        </syncfusion:SfDataGrid>
+                    </Grid>
                 </Grid>
             </syncfusion:SfNavigationDrawer.ContentView>
         </syncfusion:SfNavigationDrawer>

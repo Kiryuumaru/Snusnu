@@ -1,6 +1,7 @@
 ﻿using Snusnu.Services;
 using Snusnu.ViewModels.Windows;
 using Syncfusion.SfSkinManager;
+using Syncfusion.UI.Xaml.NavigationDrawer;
 using Syncfusion.Windows.Shared;
 using System;
 using System.Collections.Generic;
@@ -33,9 +34,33 @@ namespace Snusnu.Views.Windows
             this.session.Appearance.RegisterDependency(this);
             viewModel = new MainWindowViewModel(session);
             DataContext = viewModel;
+            navigationDrawer.ItemClicked += (s, e) => SelectNavigationItem(e.Item);
+            SelectNavigationItem((NavigationItem)navigationDrawer.SelectedItem);
         }
 
-        private void NavigationDrawer_ItemClicked(object sender, Syncfusion.UI.Xaml.NavigationDrawer.NavigationItemClickedEventArgs e)
+        private void SelectNavigationItem(NavigationItem item)
+        {
+            if (item == dashboard)
+            {
+                dashboardGrid.Visibility = Visibility.Visible;
+                walletsGrid.Visibility = Visibility.Hidden;
+                marketsGrid.Visibility = Visibility.Hidden;
+            }
+            else if (item == wallets)
+            {
+                dashboardGrid.Visibility = Visibility.Hidden;
+                walletsGrid.Visibility = Visibility.Visible;
+                marketsGrid.Visibility = Visibility.Hidden;
+            }
+            else if (item == markets)
+            {
+                dashboardGrid.Visibility = Visibility.Hidden;
+                walletsGrid.Visibility = Visibility.Hidden;
+                marketsGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void Settings_MouseDown(object sender, MouseButtonEventArgs e)
         {
 
         }

@@ -7,25 +7,8 @@ using System.Threading.Tasks;
 
 namespace Snusnu.Models
 {
-    public class Estimate : ObservableObject
+    public class Quote : ObservableObject
     {
-        private decimal price;
-        public decimal Price
-        {
-            get { return price; }
-            set => SetProperty(ref price, value);
-        }
-    }
-
-    public class Quote : Estimate
-    {
-        private decimal priceChangePercent;
-        public decimal PriceChangePercent
-        {
-            get { return priceChangePercent; }
-            set => SetProperty(ref priceChangePercent, value);
-        }
-
         private decimal highPrice;
         public decimal HighPrice
         {
@@ -40,30 +23,32 @@ namespace Snusnu.Models
             set => SetProperty(ref lowPrice, value);
         }
 
-        private decimal volume;
-        public decimal Volume
+        private decimal openPrice;
+        public decimal OpenPrice
         {
-            get { return volume; }
-            set => SetProperty(ref volume, value);
+            get { return openPrice; }
+            set => SetProperty(ref openPrice, value);
         }
 
-        private decimal tradeAmount;
-        public decimal TradeAmount
+        private decimal closePrice;
+        public decimal ClosePrice
         {
-            get { return tradeAmount; }
-            set => SetProperty(ref tradeAmount, value);
+            get { return closePrice; }
+            set => SetProperty(ref closePrice, value);
         }
 
-        private decimal tradePrice;
-        public decimal TradePrice
+        private DateTime openTime;
+        public DateTime OpenTime
         {
-            get { return tradePrice; }
-            set => SetProperty(ref tradePrice, value);
+            get { return openTime; }
+            set => SetProperty(ref openTime, value);
         }
 
-        public Quote(string symbol, decimal price)
+        private DateTime closeTime;
+        public DateTime CloseTime
         {
-
+            get { return closeTime; }
+            set => SetProperty(ref closeTime, value);
         }
     }
 }

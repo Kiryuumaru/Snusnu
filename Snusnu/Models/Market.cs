@@ -47,8 +47,7 @@ namespace Snusnu.Models
         public Wallet BaseWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(BaseWalletCode));
         public Wallet QuoteWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(QuoteWalletCode));
 
-        public decimal Price { get; set; }
-        public DateTime PriceLastUpdated { get; set; }
+        public List<Quote> Prices { get; set; } = new List<Quote>();
 
         #endregion
 
@@ -63,7 +62,7 @@ namespace Snusnu.Models
         public void NotifyUpdate()
         {
             StrSymbol = Symbol;
-            StrPrice = Price.ToString();
+            if (Prices.Count > 0) StrPrice = Prices.Last().ClosePrice.ToString();
         }
 
         #endregion
