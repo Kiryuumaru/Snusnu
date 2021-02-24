@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="App.ico" />
     <None Remove="Services\SessionObjects\BinanceWrapper.cs~RF522367.TMP" />
+    <None Remove="Views\Windows\DashboardWindow.xaml~RFc78f67.TMP" />
     <None Remove="Views\Windows\MainWindow.xaml~RFc1242ef.TMP" />
   </ItemGroup>
 
@@ -65,6 +66,10 @@
     <Compile Update="Views\Windows\APIInputWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\Windows\MarketsWindow - Copy.xaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>MarketsWindow.xaml.cs</DependentUpon>
+    </Compile>
     <Compile Update="Views\Windows\ProfileStarterWindow - Copy - Copy.xaml.cs">
       <SubType>Code</SubType>
       <DependentUpon>ProfileStarterWindow - Copy.xaml.cs</DependentUpon>
@@ -77,6 +82,10 @@
 
   <ItemGroup>
     <Page Update="Views\Windows\APIInputWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\Windows\DashboardWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

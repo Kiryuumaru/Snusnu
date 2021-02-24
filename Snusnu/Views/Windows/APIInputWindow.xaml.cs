@@ -42,7 +42,7 @@ namespace Snusnu.Views.Windows
             {
                 if (!session.BinanceWrapper.TrySetApi(APIKey.Text.Trim(), APISecret.Text.Trim())) return;
             }
-            new MainWindow(session).Show();
+            new DashboardWindow(session).Show();
             Close();
         }
 
