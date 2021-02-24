@@ -42,12 +42,11 @@ namespace Snusnu.Models
         public decimal TakerFeePercentage { get; set; }
         public decimal MakerFeePercentage { get; set; }
 
-        public string BaseWalletCode { get; set; }
-        public string QuoteWalletCode { get; set; }
-        public Wallet BaseWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(BaseWalletCode));
-        public Wallet QuoteWallet => Session.BinanceWrapper.Wallets.FirstOrDefault(i => i.Code.Equals(QuoteWalletCode));
+        public Wallet BaseWallet { get; set; }
+        public Wallet QuoteWallet { get; set; }
 
-        public List<Quote> Prices { get; set; } = new List<Quote>();
+        public decimal Price { get; set; }
+        public DateTime LastUpdated { get; set; }
 
         #endregion
 
@@ -59,10 +58,27 @@ namespace Snusnu.Models
 
         #region Methods
 
+        public override string ToString()
+        {
+            return Symbol;
+        }
+
         public void NotifyUpdate()
         {
             StrSymbol = Symbol;
-            if (Prices.Count > 0) StrPrice = Prices.Last().ClosePrice.ToString();
+            StrPrice = Price.ToString();
+        }
+
+        public bool HasWallet(Wallet wallet)
+        {
+            if (BaseWallet == null || QuoteWallet == null) return false;
+            return BaseWallet.Code.Equals(wallet.Code) || QuoteWallet.Code.Equals(wallet.Code);
+        }
+
+        public bool HasMarketInWallet(Market market)
+        {
+            if (BaseWallet == null || QuoteWallet == null) return false;
+            return BaseWallet.HasMarket(market) || QuoteWallet.HasMarket(market);
         }
 
         #endregion

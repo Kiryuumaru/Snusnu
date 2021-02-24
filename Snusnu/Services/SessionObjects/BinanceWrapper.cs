@@ -171,7 +171,7 @@ namespace Snusnu.Services.SessionObjects
                     existing.Name = coin.Name;
                     existing.Code = coin.Coin;
                     existing.Balance = coin.Free;
-                    existing.BalanceLastUpdated = DateTime.UtcNow;
+                    existing.LastUpdated = DateTime.UtcNow;
                     existing.NotifyUpdate();
                 }
                 foreach (var wallet in new List<Wallet>(Wallets))
@@ -189,6 +189,10 @@ namespace Snusnu.Services.SessionObjects
                     if (tradeFee == null) continue;
                     var price = prices.Data.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
                     if (price == null) continue;
+                    var baseWallet = Wallets.FirstOrDefault(i => i.Code.Equals(symbol.BaseAsset));
+                    if (baseWallet == null) continue;
+                    var quoteWallet = Wallets.FirstOrDefault(i => i.Code.Equals(symbol.QuoteAsset));
+                    if (quoteWallet == null) continue;
                     var existing = Markets.FirstOrDefault(i => i.Symbol.Equals(symbol.Name));
                     if (existing == null)
                     {
@@ -203,18 +207,16 @@ namespace Snusnu.Services.SessionObjects
                     existing.OrderTypes = symbol.OrderTypes;
                     existing.TakerFeePercentage = tradeFee.TakerFee * 100;
                     existing.MakerFeePercentage = tradeFee.MakerFee * 100;
-                    existing.BaseWalletCode = symbol.BaseAsset;
-                    existing.QuoteWalletCode = symbol.QuoteAsset;
-                    existing.Prices.Add(new Quote()
-                    {
-                        HighPrice = price.Price,
-                        LowPrice = price.Price,
-                        OpenPrice = price.Price,
-                        ClosePrice = price.Price,
-                        OpenTime = ServerTime,
-                        CloseTime = ServerTime,
-                    });
+                    existing.Price = price.Price;
+                    existing.LastUpdated = ServerTime;
+
+                    baseWallet.Markets.Add(existing);
+                    quoteWallet.Markets.Add(existing);
+                    existing.BaseWallet = baseWallet;
+                    existing.QuoteWallet = quoteWallet;
                     existing.NotifyUpdate();
+                    baseWallet.NotifyUpdate();
+                    quoteWallet.NotifyUpdate();
                 }
                 foreach (var market in new List<Market>(Markets))
                 {
@@ -223,6 +225,10 @@ namespace Snusnu.Services.SessionObjects
                         Markets.Remove(market);
                     }
                 }
+
+                var btc = Wallets.FirstOrDefault(i => i.Code.Equals("BTC"));
+                var tree = btc.GetWalletTree();
+                var s = 1;
 
                 #endregion
 
@@ -241,17 +247,10 @@ namespace Snusnu.Services.SessionObjects
                     await Task.Delay(Defaults.RetrySpan);
                     continue;
                 }
-                var tickerStream = await socket.Spot.SubscribeToAllSymbolMiniTickerUpdatesAsync(SymbolMiniTickerUpdates);
-                if (!tickerStream.Success)
-                {
-                    session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server market ticker subscribe failed", LogType.Error));
-                    await Task.Delay(Defaults.RetrySpan);
-                    continue;
-                }
-                tickerStream.Data.ConnectionLost += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection lost", LogType.Info)); };
-                tickerStream.Data.ConnectionRestored += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection restored", LogType.Info)); };
-                tickerStream.Data.ActivityPaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity paused", LogType.Info)); };
-                tickerStream.Data.ActivityUnpaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity unpaused", LogType.Info)); };
+                socketStream.Data.ConnectionLost += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection lost", LogType.Info)); };
+                socketStream.Data.ConnectionRestored += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server connection restored", LogType.Info)); };
+                socketStream.Data.ActivityPaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity paused", LogType.Info)); };
+                socketStream.Data.ActivityUnpaused += delegate { session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Server activity unpaused", LogType.Info)); };
                 session.Logger.AddLog(new Log(DateTime.Now, "Binance", "Ready", LogType.Info));
                 StartRegularRefresher();
                 break;
@@ -286,38 +285,6 @@ namespace Snusnu.Services.SessionObjects
 
         #region UserUpdater
 
-        private void SymbolMiniTickerUpdates(IEnumerable<IBinanceMiniTick> ticks)
-        {
-            foreach (var tick in ticks)
-            {
-                var market = Markets.FirstOrDefault(i => i.Symbol.Equals(tick.Symbol));
-                if (market != null)
-                {
-                    var lastQuote = market.Prices.Last();
-                    if (lastQuote.OpenTime + Defaults.CandleSpan < ServerTime)
-                    {
-                        market.Prices.Add(new Quote()
-                        {
-                            HighPrice = tick.LastPrice,
-                            LowPrice = tick.LastPrice,
-                            OpenPrice = tick.LastPrice,
-                            ClosePrice = tick.LastPrice,
-                            OpenTime = ServerTime,
-                            CloseTime = ServerTime,
-                        });
-                    }
-                    else
-                    {
-                        if (lastQuote.HighPrice < tick.LastPrice) lastQuote.HighPrice = tick.LastPrice;
-                        if (lastQuote.LowPrice > tick.LastPrice) lastQuote.LowPrice = tick.LastPrice;
-                        lastQuote.ClosePrice = tick.LastPrice;
-                        lastQuote.CloseTime = ServerTime;
-                    }
-                    market.NotifyUpdate();
-                }
-            }
-        }
-
         private void AccountInfoUpdate(BinanceStreamAccountInfo accountInfo)
         {
             foreach (var balance in accountInfo.Balances)
@@ -326,7 +293,7 @@ namespace Snusnu.Services.SessionObjects
                 if (wallet != null)
                 {
                     wallet.Balance = balance.Free;
-                    wallet.BalanceLastUpdated = DateTime.UtcNow;
+                    wallet.LastUpdated = DateTime.UtcNow;
                     wallet.NotifyUpdate();
                 }
             }
@@ -350,7 +317,7 @@ namespace Snusnu.Services.SessionObjects
                 if (wallet != null)
                 {
                     wallet.Balance = balance.Free;
-                    wallet.BalanceLastUpdated = DateTime.UtcNow;
+                    wallet.LastUpdated = DateTime.UtcNow;
                     wallet.NotifyUpdate();
                 }
             }
@@ -362,10 +329,16 @@ namespace Snusnu.Services.SessionObjects
             if (wallet != null)
             {
                 wallet.Balance = balanceUpdate.BalanceDelta;
-                wallet.BalanceLastUpdated = DateTime.UtcNow;
+                wallet.LastUpdated = DateTime.UtcNow;
                 wallet.NotifyUpdate();
             }
         }
+
+        #endregion
+
+        #region Helpers
+
+
 
         #endregion
 
@@ -385,133 +358,6 @@ namespace Snusnu.Services.SessionObjects
             OnLazyInitialized = action;
         }
 
-        private async Task Refresh()
-        {
-
-        }
-
         #endregion
-        //public class BinanceSymbol : ICommonSymbol
-        //{
-        //    public BinanceSymbol();
-
-        //    //
-        //    // Summary:
-        //    //     Filter for the max accuracy of the price for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolPriceFilter? PriceFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for the minimal size of an order for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolMinNotionalFilter? MinNotionalFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for max algorithmic orders for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolMaxAlgorithmicOrdersFilter? MaxAlgorithmicOrdersFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for max number of orders for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolMaxOrdersFilter? MaxOrdersFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for max accuracy of the quantity for this symbol, specifically for market
-        //    //     orders
-        //    [JsonIgnore]
-        //    public BinanceSymbolMarketLotSizeFilter? MarketLotSizeFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for max accuracy of the quantity for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolLotSizeFilter? LotSizeFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for max amount of iceberg parts for this symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolIcebergPartsFilter? IceBergPartsFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filters for order on this symbol
-        //    public IEnumerable<BinanceSymbolFilter> Filters { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Permissions types
-        //    [JsonProperty(ItemConverterType = typeof(AccountTypeConverter))]
-        //    public IEnumerable<AccountType> Permissions { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The precision of the quote asset commission
-        //    public int QuoteCommissionPrecision { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The precision of the base asset commission
-        //    public int BaseCommissionPrecision { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Whether or not it is allowed to specify the quantity of a market order in the
-        //    //     quote asset
-        //    [JsonProperty("quoteOrderQtyMarketAllowed")]
-        //    public bool QuoteOrderQuantityMarketAllowed { get; set; }
-        //    //
-        //    // Summary:
-        //    //     If OCO(One Cancels Other) orders are allowed
-        //    public bool OCOAllowed { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Margin trading orders allowed
-        //    public bool IsMarginTradingAllowed { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Spot trading orders allowed
-        //    public bool IsSpotTradingAllowed { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Ice berg orders allowed
-        //    public bool IceBergAllowed { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Allowed order types
-        //    [JsonProperty(ItemConverterType = typeof(OrderTypeConverter))]
-        //    public IEnumerable<OrderType> OrderTypes { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The precision of the quote asset
-        //    [JsonProperty("quotePrecision")]
-        //    public int QuoteAssetPrecision { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The quote asset
-        //    public string QuoteAsset { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The precision of the base asset
-        //    public int BaseAssetPrecision { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The base asset
-        //    public string BaseAsset { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The status of the symbol
-        //    [JsonConverter(typeof(SymbolStatusConverter))]
-        //    public SymbolStatus Status { get; set; }
-        //    //
-        //    // Summary:
-        //    //     The symbol
-        //    [JsonProperty("symbol")]
-        //    public string Name { get; set; }
-        //    //
-        //    // Summary:
-        //    //     Filter for the maximum deviation of the price
-        //    [JsonIgnore]
-        //    public BinanceSymbolPercentPriceFilter? PricePercentFilter { get; }
-        //    //
-        //    // Summary:
-        //    //     Filter for the maximum position on a symbol
-        //    [JsonIgnore]
-        //    public BinanceSymbolMaxPositionFilter? MaxPositionFilter { get; }
-        //}
     }
 }
